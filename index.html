@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Space Invaders</title>
+    <style>
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background-color: black;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        #player, .alien, .bullet {
+            position: absolute;
+            transition: transform 0.016s linear; /* Helps with 60 FPS smoothness */
+        }
+        #player {
+           height: 40px;
+           bottom: 20px;
+           left: 375px;
+        }
+        .alien {
+            width: 40px;
+            height: 40px;
+        }
+        .bullet {
+            width: 5px;
+            height: 15px;
+            background-color: white;
+        }
+        #pause-menu {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            z-index: 100;
+        }
+        #scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: monospace;
+        }
+      
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="scoreboard">
+            <div id="timer">Time: 60</div>
+            <div id="score">Score: 0</div>
+            <div id="lives">Lives: 3</div>
+        </div>
+        <div >
+            <img src="jet.png" alt="" id="player">
+        </div>
+        <div id="pause-menu">
+            <h2>PAUSE MENU</h2>
+            <button id="continue-btn">Continue</button>
+            <button id="restart-btn">Restart</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
