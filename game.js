@@ -1,22 +1,28 @@
 // Space Invaders Game
 class SpaceInvadersGame {
     constructor() {
+        this.sounds = {
+            killEnemy: new Audio('assets/sounds/kill_enemy.mp3'),
+            loseLife: new Audio('assets/sounds/lose_life.mp3')
+        };
+        this.enemyDirection = 1; 
+        this.enemySpeed = 0.2;
         // Game Configuration
         this.config = {
             FPS: 60,
             FRAME_TIME: 1000 / 60,
             GAME_WIDTH: 800,
-            GAME_HEIGHT: 600,
+            GAME_HEIGHT: 900,
             PLAYER_SPEED: 5,
-            BULLET_SPEED: 10
-        };
+            BULLET_SPEED: 10 
+        }; 
 
         // Game State
         this.state = {
             isRunning: false,
             isPaused: false,
             score: 0,
-            lives: 1,
+            lives: 3,
             timeRemaining: 60
         };
         
@@ -94,33 +100,63 @@ class SpaceInvadersGame {
             isRunning: true,
             isPaused: false,
             score: 0,
-            lives: 1,
+            lives: 3, // Start with 3 lives
             timeRemaining: 60
         };
-        
+    
         // Clear existing bullets and aliens
         this.gameObjects.bullets.forEach(bullet => bullet.element.remove());
         this.gameObjects.aliens.forEach(alien => alien.element.remove());
         this.gameObjects.bullets = [];
         this.gameObjects.aliens = [];
-
+    
         // Reset player position
         this.elements.player.style.left = '375px';
-
+    
         this.updateScoreboard();
         this.spawnAliens();
     }
-
     togglePause() {
         this.state.isPaused = !this.state.isPaused;
+    
+        if (this.state.isPaused) {
+            // Pause the timer
+            clearInterval(this.timerInterval);
+        } else {
+            // Resume the timer
+            this.test_timeRemaining();
+        }
+    
+        // Show or hide the pause menu
         this.elements.pauseMenu.style.display = this.state.isPaused ? 'block' : 'none';
     }
-
     restartGame() {
         this.resetGameState();
-        this.togglePause(); // Hide pause menu
+    
+        // Clear any existing timers to avoid duplication
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null; // Reset timer reference
+        }
+    
+        // Reset the game state
+        this.state.timeRemaining = 60; // Set the timer to the initial value (e.g., 60 seconds)
+        this.state.isPaused = false;
+        this.state.isRunning = true;
+    
+        // Restart the timer
+        this.test_timeRemaining();
+    
+        // Hide all overlays (Pause menu, Game Over, etc.)
+        this.elements.pauseMenu.style.display = 'none';
+        document.querySelectorAll('.game-over-overlay, .congratulations-overlay').forEach(overlay => {
+            overlay.remove();
+        });
+    
+        // Update the scoreboard display
+        this.updateScoreboard();
     }
-
+    
     spawnAliens() {
         const rows = 5;
         const cols = 10;
@@ -141,7 +177,7 @@ class SpaceInvadersGame {
             }
         }
     }
-
+   
     // Update the tryShoot method in the previous implementation
 tryShoot() {
     // Prevent rapid-fire by adding a small cooldown
@@ -172,49 +208,98 @@ tryShoot() {
 
     this.performance.lastShootTime = currentTime;
 }
+updateBullets() {
+    this.gameObjects.bullets = this.gameObjects.bullets.filter(bullet => {
+        const currentTop = parseFloat(bullet.element.style.top || 0);
 
-    updateBullets() {
-        // Move existing bullets
-        this.gameObjects.bullets = this.gameObjects.bullets.filter(bullet => {
-            const currentTop = parseFloat(bullet.element.style.top || 0);
-            
-            // Move bullet up
+        if (bullet.isEnemyBullet) {
+            // Move enemy bullets down
+            bullet.element.style.top = `${currentTop + this.config.BULLET_SPEED / 5}px`; // Enemy bullets are slower
+
+            // Check for collision with player
+            const playerRect = this.elements.player.getBoundingClientRect();
+            const bulletRect = bullet.element.getBoundingClientRect();
+
+            if (this.isColliding(playerRect, bulletRect)) {
+                bullet.element.remove();
+                this.loseLife(); // Lose a life when hit
+                return false; // Remove bullet
+            }
+
+            // Remove bullet if off-screen
+            if (currentTop > this.config.GAME_HEIGHT) {
+                bullet.element.remove();
+                return false;
+            }
+        } else {
+            // Move player bullets up
             bullet.element.style.top = `${currentTop - this.config.BULLET_SPEED}px`;
 
-            // Remove bullet if it goes off screen
+            // Remove player bullets if off-screen
             if (currentTop < 0) {
                 bullet.element.remove();
                 return false;
             }
 
-            // Basic collision detection with aliens
+            // Check collision with aliens
             this.checkBulletAlienCollision(bullet);
+        }
 
-            return true;
-        });
-    }
+        return true;
+    });
+}
 
-    checkBulletAlienCollision(bullet) {
-        this.gameObjects.aliens = this.gameObjects.aliens.filter(alien => {
-            const bulletRect = bullet.element.getBoundingClientRect();
-            const alienRect = alien.element.getBoundingClientRect();
+checkBulletAlienCollision(bullet) {
+    this.gameObjects.aliens = this.gameObjects.aliens.filter(alien => {
+        const alienRect = alien.element.getBoundingClientRect();
+        const bulletRect = bullet.element.getBoundingClientRect();
 
-            if (this.isColliding(bulletRect, alienRect)) {
-                // Remove alien and bullet
-                alien.element.remove();
-                bullet.element.remove();
-                
-                // Increase score
-                this.state.score += 10;
-                
-                this.updateScoreboard();
-                
-                
-                return false; // Remove alien from tracking
-            }
-            return true;
-        });
-    }
+        if (this.isColliding(bulletRect, alienRect)) {
+            // Add destroyed class for animation
+            alien.element.classList.add('destroyed');
+            
+            // Play kill enemy sound
+            this.sounds.killEnemy.currentTime = 0; // Reset sound playback
+            this.sounds.killEnemy.play();
+
+            // Increase score
+            this.state.score += 10;
+            this.updateScoreboard();
+
+            // Create temporary score label at alien position
+            const scoreLabel = document.createElement('div');
+            scoreLabel.classList.add('score-label');
+            scoreLabel.textContent = '+10';
+            scoreLabel.style.left = `${alien.x + 20}px`; // Position near the alien
+            scoreLabel.style.top = `${alien.y + 20}px`;
+            this.elements.container.appendChild(scoreLabel);
+
+            // Smoothly animate the score label (move it upwards and fade out)
+            setTimeout(() => {
+                scoreLabel.style.transition = 'all 1s ease-out'; // Smooth transition
+                scoreLabel.style.top = `${alien.y - 30}px`; // Move it upwards
+                scoreLabel.style.opacity = 0; // Fade out
+            }, 10);
+
+            // Remove the label after animation completes
+            setTimeout(() => {
+                scoreLabel.remove();
+            }, 1000); // Duration of the animation
+
+            // Remove alien after animation completes (0.5s)
+            setTimeout(() => {
+                alien.element.remove(); // Remove the alien after the animation
+            }, 500); // Delay removal for animation time
+
+            // Remove bullet
+            bullet.element.remove();
+
+            return false; // Remove alien from game objects
+        }
+
+        return true; // Keep alien if not hit
+    });
+}
 
     isColliding(rect1, rect2) {
         return !(rect1.right < rect2.left || 
@@ -234,15 +319,83 @@ tryShoot() {
             this.elements.player.style.left = `${currentLeft + playerSpeed}px`;
         }
     }
-    test_timeRemaining(){
-        const count = setInterval(() => {
-            // this.state.timeRemaining = timeRemaining
-            if ( this.state.timeRemaining <= 0){
-                clearInterval(count)
-                this.gameOver();
+    test_timeRemaining() {
+        if (this.timerInterval) clearInterval(this.timerInterval); // Clear existing timer if any
+    
+        this.timerInterval = setInterval(() => {
+            if (!this.state.isPaused) { // Decrease time only when not paused
+                if (this.state.timeRemaining <= 0) {
+                    clearInterval(this.timerInterval);
+                    this.gameOver();
+                }
+                this.state.timeRemaining--;
+                this.updateScoreboard();
             }
-            this.state.timeRemaining--;
-         }, 1000);
+        }, 1000);
+    }
+    updateAliens() {
+        this.gameObjects.aliens.forEach((alien) => {
+            alien.x += this.enemyDirection * this.enemySpeed;
+            alien.element.style.left = `${alien.x}px`;
+        });
+    
+        // Check if any alien hits the screen edge and reverse direction
+        const aliensAtEdge = this.gameObjects.aliens.some((alien) => 
+            alien.x <= 0 || alien.x >= this.config.GAME_WIDTH - 50
+        );
+    
+        if (aliensAtEdge) {
+            this.enemyDirection *= -1; // Reverse direction
+            this.gameObjects.aliens.forEach((alien) => {
+                alien.y += 20; // Move aliens down slightly
+                alien.element.style.top = `${alien.y}px`;
+            });
+        }
+    }
+    updateEnemyShooting() {
+        const randomAlienIndex = Math.floor(Math.random() * this.gameObjects.aliens.length);
+        const alien = this.gameObjects.aliens[randomAlienIndex];
+    
+        // Random chance to shoot
+        if (Math.random() < 0.01) { // ~1% chance per frame
+            const bullet = document.createElement('div');
+            bullet.classList.add('enemy-bullet');
+            bullet.style.left = `${alien.x + 20}px`;
+            bullet.style.top = `${alien.y + 20}px`;
+    
+            this.elements.container.appendChild(bullet);
+    
+            this.gameObjects.bullets.push({
+                element: bullet,
+                x: alien.x,
+                y: alien.y,
+                isEnemyBullet: true // Mark as enemy bullet
+            });
+        }
+    }
+    loseLife() {
+        this.state.lives--;
+        this.updateScoreboard();
+    
+        // Play lose life sound
+        this.sounds.loseLife.currentTime = 0; // Reset sound playback
+        this.sounds.loseLife.play();
+    
+        // Add visual effect
+        this.flashPlayer();
+    
+        if (this.state.lives <= 0) {
+            this.gameOver();
+        }
+    }
+    flashPlayer() {
+        const player = this.elements.player;
+        player.classList.add('flash');
+    
+        // Remove the class after the animation completes
+        setTimeout(() => {
+            player.classList.remove('flash');
+        }, 300);
     }
     gameOver() {
         // Stop the game
@@ -349,19 +502,19 @@ tryShoot() {
     }
 
     gameLoop(timestamp) {
-        // Performance tracking
         const deltaTime = timestamp - this.performance.lastFrameTime;
         this.performance.lastFrameTime = timestamp;
-
+    
         if (!this.state.isPaused && this.state.isRunning) {
             this.updatePlayerMovement();
             this.updateBullets();
+            this.updateAliens(); // Move enemies
+            this.updateEnemyShooting(); // Make enemies shoot
             this.updateScoreboard();
-
+    
             this.performance.frameCount++;
         }
-
-        // Always request next animation frame
+    
         requestAnimationFrame(this.gameLoop.bind(this));
     }
 
@@ -370,10 +523,25 @@ tryShoot() {
     }
 }
 
+
+function updateTimer() {
+   
+    const timerElement = document.getElementById('timer');
+    timerElement.textContent = `Time: ${timeRemaining}`;
+
+    if (timeRemaining <= 10) {    
+        timerElement.classList.add('timer-warning');
+    } else {
+        timerElement.classList.remove('timer-warning');
+    }
+
+    if (timeRemaining <= 0) {
+        // Handle game over or restart
+    }
+}
+
+setInterval(updateTimer, 1000);
 // Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     const game = new SpaceInvadersGame();
 });
-
-
-
