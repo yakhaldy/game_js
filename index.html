@@ -226,7 +226,19 @@
     position: absolute;
     transition: transform 1s ease-in-out, opacity 1s;
 }
-
+#Sound{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    z-index: 1000;
+}
 
     </style>
 </head>
@@ -251,12 +263,14 @@
 
     <!-- Instructions Div at the bottom-left -->
     <div id="game-instructions">
+        <button id="Sound">Sound: On</button>
         <h3>Game Controls</h3>
         <ul>
             <li><i class="fas fa-arrow-left icon icon-left"></i><span>Move Left</span></li>
             <li><i class="fas fa-arrow-right icon icon-right"></i><span>Move Right</span></li>
             <li><i class="fas fa-space-shuttle icon icon-pause"></i><span>Shoot (Press Space bar) </span></li>
             <li><i class="fas fa-pause icon icon-pause"></i><span>Pause (Press Esc)</span></li>
+            <li><span>Sound (Press q)</span></li>
         </ul>
     </div>
 
