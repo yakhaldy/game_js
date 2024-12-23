@@ -5,8 +5,10 @@ const sounds = {
     loseLife: new Audio('assets/sounds/lose_life.mp3')
 };
 
+
+
 let enemyDirection = 1;
-let enemySpeed = 0.2;
+let enemySpeed = 6//0.2;
 let timerInterval = null;
 
 const config = {
@@ -21,11 +23,11 @@ const state = {
     isPaused: false,
     score: 0,
     lives: 3,
-    timeRemaining: 60
+    timeRemaining: 60,
+    currentLevel: 1
 };
 
 const performance = {
-    frameCount: 0,
     lastFrameTime: 0,
     lastShootTime: 0
 };
@@ -37,9 +39,10 @@ const elements = {
     scoreBoard: {
         timer: document.getElementById('timer'),
         score: document.getElementById('score'),
-        lives: document.getElementById('lives')
+        lives: document.getElementById('lives'),
+        Level: document.getElementById('Level')
     },
-    soundButton: document.getElementById('Sound') 
+    soundButton: document.getElementById('Sound')
 };
 
 const input = {
@@ -65,9 +68,9 @@ function setupEventListeners() {
                 tryShoot();
                 break;
             case 'Escape': togglePause(); break;
-            case 'KeyQ': 
-            toggleSound();
-            break;
+            case 'KeyQ':
+                toggleSound();
+                break;
         }
     });
 
@@ -263,7 +266,10 @@ function updateAliens() {
     gameObjects.aliens.forEach((alien) => {
         alien.x += enemyDirection * enemySpeed;
         alien.element.style.left = `${alien.x}px`;
+        
     });
+    
+    
 
     const aliensAtEdge = gameObjects.aliens.some((alien) =>
         alien.x <= 0 || alien.x >= config.GAME_WIDTH - 50
@@ -378,6 +384,7 @@ function updateScoreboard() {
     elements.scoreBoard.timer.textContent = `Time: ${state.timeRemaining}`;
     elements.scoreBoard.score.textContent = `Score: ${state.score}`;
     elements.scoreBoard.lives.textContent = `Lives: ${state.lives}`;
+    elements.scoreBoard.Level.textContent = `Level: ${state.currentLevel}`
     checkTopScore();
 }
 
@@ -388,7 +395,7 @@ function checkTopScore() {
 }
 
 function gameLoop(timestamp) {
-    const deltaTime = timestamp - performance.lastFrameTime;
+    //const deltaTime = timestamp - performance.lastFrameTime;
     performance.lastFrameTime = timestamp;
 
     if (!state.isPaused && state.isRunning) {
@@ -397,8 +404,6 @@ function gameLoop(timestamp) {
         updateAliens();
         updateEnemyShooting();
         updateScoreboard();
-
-        performance.frameCount++;
     }
 
     requestAnimationFrame(gameLoop);
@@ -458,12 +463,39 @@ function createOverlay(title, score, buttonColor, isTop = false) {
 
     overlay.querySelector('#restart-game-btn').addEventListener('click', () => {
         overlay.remove();
-        restartGame();
+        if (title === 'Congratulations!') {
+            console.log('--');
+            nextLevel();
+        } else {
+            console.log('+++');   
+            restartGame()
+        }
     });
 
     return overlay;
 }
+function nextLevel() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    state.currentLevel += 1
+    state.timeRemaining = 60;
+    state.isPaused = false;
+    state.isRunning = true;
+    config.BULLET_SPEED += 5
+    enemySpeed += 0.5
 
+    resetGameState();
+    startTimer();
+    elements.pauseMenu.style.display = 'none';
+
+    document.querySelectorAll('.game-over-overlay, .congratulations-overlay').forEach(overlay => {
+        overlay.remove();
+    });
+
+    updateScoreboard();
+}
 function restartGame() {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -485,7 +517,7 @@ function restartGame() {
     updateScoreboard();
 }
 
-// Initialize game when DOM is loaded
+// Initialize game when DOM is loaded 
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     initializeGame();
