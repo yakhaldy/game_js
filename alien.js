@@ -1,21 +1,20 @@
-import { elements, gameObjects, enemySpeed, config } from './game.js';
+import { elements, gameObjects, enemySpeed, config, gameOver } from './game.js';
 
 let enemyDirection = 1;
 
 export function spawnAliens() {
-    // Check if elements are initialized
-    if (!elements || !elements.container) {
-        console.error('Game elements not initialized');
-        return;
-    }
-
     const rows = 5;
     const cols = 10;
+    const alienWidth = config.GAME_WIDTH / (cols + 5);
+    const alienHeight = config.GAME_HEIGHT / (rows + 15);
+
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const alien = document.createElement('img');
             alien.src = 'alien.png';
             alien.classList.add('alien');
+            alien.style.width = `${alienWidth}px`;
+            alien.style.height = `${alienHeight}px`;
             alien.style.left = `${col * 60 + 100}px`;
             alien.style.top = `${row * 60 + 50}px`;
             elements.container.appendChild(alien);
@@ -30,7 +29,6 @@ export function spawnAliens() {
 }
 
 export function updateAliens() {
-    if (!elements) return;
 
     gameObjects.aliens.forEach((alien) => {
         alien.x += enemyDirection * enemySpeed;
@@ -44,10 +42,17 @@ export function updateAliens() {
     if (aliensAtEdge) {
         enemyDirection *= -1;
         gameObjects.aliens.forEach((alien) => {
-            alien.y += 20;
+            alien.y += 20; /// mochkil
             alien.element.style.top = `${alien.y}px`;
         });
     }
+    gameObjects.aliens.forEach((alien) => {
+        if (alien.y + alien.element.offsetHeight >= config.GAME_HEIGHT) {
+            gameOver();
+            alien.element.remove()
+        }
+    });
+
 }
 
 export function updateEnemyShooting() {

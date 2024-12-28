@@ -1,5 +1,5 @@
 import { spawnAliens, updateAliens, updateEnemyShooting } from './alien.js'
-import { tryShoot, updateBullets,updatePlayerMovement } from './player.js'
+import { tryShoot, updateBullets, updatePlayerMovement } from './player.js'
 // Game state and configuration objects
 
 export const sounds = {
@@ -11,11 +11,17 @@ export let enemySpeed = 0.2;
 let timerInterval = null;
 
 export const config = {
-    GAME_WIDTH: 800,
-    GAME_HEIGHT: 900,
+    get GAME_WIDTH() {
+        return elements.container.clientWidth;
+    },
+    get GAME_HEIGHT() {
+        return elements.container.clientHeight;
+    },
+
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10
-}
+
+};
 
 export const state = {
     isRunning: false,
@@ -107,13 +113,10 @@ function toggleSound() {
         testSound.play().catch(error => console.log('Error playing sound:', error));
     }
 }
-
-
 function initializeGame() {
     resetGameState();
     startGameLoop();
 }
-
 function resetGameState() {
     Object.assign(state, {
         isRunning: true,
@@ -133,7 +136,6 @@ function resetGameState() {
     updateScoreboard();
     spawnAliens();
 }
-
 function togglePause() {
     state.isPaused = !state.isPaused;
 
@@ -145,7 +147,6 @@ function togglePause() {
 
     elements.pauseMenu.style.display = state.isPaused ? 'block' : 'none';
 }
-
 function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
 
@@ -160,12 +161,6 @@ function startTimer() {
         }
     }, 1000);
 }
-
-
-
-
-
-
 
 export function createScoreLabel(alien) {
     const scoreLabel = document.createElement('div');
@@ -189,10 +184,6 @@ export function animateScoreLabel(scoreLabel, alien) {
     }, 1000);
 }
 
-
-
-
-
 export function updateScoreboard() {
     elements.scoreBoard.timer.textContent = `Time: ${state.timeRemaining}`;
     elements.scoreBoard.score.textContent = `Score: ${state.score}`;
@@ -208,7 +199,6 @@ function checkTopScore() {
 }
 
 function gameLoop(timestamp) {
-  
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
         updateBullets();
@@ -275,10 +265,8 @@ function createOverlay(title, score, buttonColor, isTop = false) {
     overlay.querySelector('#restart-game-btn').addEventListener('click', () => {
         overlay.remove();
         if (title === 'Congratulations!') {
-            console.log('--');
             nextLevel();
         } else {
-            console.log('+++');
             restartGame()
         }
     });
@@ -294,7 +282,7 @@ function nextLevel() {
     state.timeRemaining = 60;
     state.isPaused = false;
     state.isRunning = true;
-    config.BULLET_SPEED += 5
+    config.BULLET_SPEED += 3
     enemySpeed += 0.5
 
     resetGameState();
@@ -332,5 +320,6 @@ function restartGame() {
 document.addEventListener('DOMContentLoaded', () => {
     //initializeElements();
     setupEventListeners();
+    startTimer()
     initializeGame();
 });
