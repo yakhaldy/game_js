@@ -1,24 +1,23 @@
+import { spawnAliens, updateAliens, updateEnemyShooting } from './alien.js'
+import { tryShoot, updateBullets,updatePlayerMovement } from './player.js'
 // Game state and configuration objects
 
-const sounds = {
+export const sounds = {
     killEnemy: new Audio('assets/sounds/kill_enemy.mp3'),
     loseLife: new Audio('assets/sounds/lose_life.mp3')
 };
 
-
-
-let enemyDirection = 1;
-let enemySpeed = 6//0.2;
+export let enemySpeed = 0.2;
 let timerInterval = null;
 
-const config = {
+export const config = {
     GAME_WIDTH: 800,
     GAME_HEIGHT: 900,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10
-};
+}
 
-const state = {
+export const state = {
     isRunning: false,
     isPaused: false,
     score: 0,
@@ -27,12 +26,11 @@ const state = {
     currentLevel: 1
 };
 
-const performance = {
-    lastFrameTime: 0,
+export const performance = {
     lastShootTime: 0
 };
 
-const elements = {
+export const elements = {
     container: document.getElementById('game-container'),
     player: document.getElementById('player'),
     pauseMenu: document.getElementById('pause-menu'),
@@ -45,14 +43,14 @@ const elements = {
     soundButton: document.getElementById('Sound')
 };
 
-const input = {
+export const input = {
     left: false,
     right: false,
     shoot: false,
     sound: true
 };
 
-const gameObjects = {
+export const gameObjects = {
     bullets: [],
     aliens: []
 };
@@ -163,157 +161,13 @@ function startTimer() {
     }, 1000);
 }
 
-function spawnAliens() {
-    const rows = 5;
-    const cols = 10;
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            const alien = document.createElement('img');
-            alien.src = 'alien.png';
-            alien.classList.add('alien');
-            alien.style.left = `${col * 60 + 100}px`;
-            alien.style.top = `${row * 60 + 50}px`;
-            elements.container.appendChild(alien);
 
-            gameObjects.aliens.push({
-                element: alien,
-                x: col * 60 + 100,
-                y: row * 60 + 50
-            });
-        }
-    }
-}
 
-function tryShoot() {
-    const currentTime = Date.now();
-    if (currentTime - performance.lastShootTime < 250) return;
 
-    const playerLeft = parseInt(elements.player.style.left || '375');
-    const playerWidth = elements.player.offsetWidth;
-    const bulletStartX = playerLeft + (playerWidth / 2) - 2.5;
-    const bulletStartY = config.GAME_HEIGHT - 70;
 
-    const bullet = document.createElement('div');
-    bullet.classList.add('bullet');
-    bullet.style.left = `${bulletStartX}px`;
-    bullet.style.top = `${bulletStartY}px`;
-    elements.container.appendChild(bullet);
 
-    gameObjects.bullets.push({
-        element: bullet,
-        x: bulletStartX,
-        y: bulletStartY
-    });
 
-    performance.lastShootTime = currentTime;
-}
-
-function updateBullets() {
-    gameObjects.bullets = gameObjects.bullets.filter(bullet => {
-        const currentTop = parseFloat(bullet.element.style.top || 0);
-
-        if (bullet.isEnemyBullet) {
-            bullet.element.style.top = `${currentTop + config.BULLET_SPEED / 5}px`;
-
-            const playerRect = elements.player.getBoundingClientRect();
-            const bulletRect = bullet.element.getBoundingClientRect();
-
-            if (isColliding(playerRect, bulletRect)) {
-                bullet.element.remove();
-                loseLife();
-                return false;
-            }
-
-            if (currentTop > config.GAME_HEIGHT) {
-                bullet.element.remove();
-                return false;
-            }
-        } else {
-            bullet.element.style.top = `${currentTop - config.BULLET_SPEED}px`;
-
-            if (currentTop < 0) {
-                bullet.element.remove();
-                return false;
-            }
-
-            checkBulletAlienCollision(bullet);
-        }
-
-        return true;
-    });
-}
-
-function isColliding(rect1, rect2) {
-    return !(rect1.right < rect2.left ||
-        rect1.left > rect2.right ||
-        rect1.bottom < rect2.top ||
-        rect1.top > rect2.bottom);
-}
-
-function updatePlayerMovement() {
-    const playerSpeed = config.PLAYER_SPEED;
-    const currentLeft = parseInt(elements.player.style.left || '375');
-
-    if (input.left && currentLeft > 0) {
-        elements.player.style.left = `${currentLeft - playerSpeed}px`;
-    }
-    if (input.right && currentLeft < config.GAME_WIDTH - 50) {
-        elements.player.style.left = `${currentLeft + playerSpeed}px`;
-    }
-}
-
-function updateAliens() {
-    gameObjects.aliens.forEach((alien) => {
-        alien.x += enemyDirection * enemySpeed;
-        alien.element.style.left = `${alien.x}px`;
-        
-    });
-    
-    
-
-    const aliensAtEdge = gameObjects.aliens.some((alien) =>
-        alien.x <= 0 || alien.x >= config.GAME_WIDTH - 50
-    );
-
-    if (aliensAtEdge) {
-        enemyDirection *= -1;
-        gameObjects.aliens.forEach((alien) => {
-            alien.y += 20;
-            alien.element.style.top = `${alien.y}px`;
-        });
-    }
-}
-
-function checkBulletAlienCollision(bullet) {
-    gameObjects.aliens = gameObjects.aliens.filter(alien => {
-        const alienRect = alien.element.getBoundingClientRect();
-        const bulletRect = bullet.element.getBoundingClientRect();
-
-        if (isColliding(bulletRect, alienRect)) {
-            alien.element.classList.add('destroyed');
-            if (input.sound) {
-                sounds.killEnemy.currentTime = 0;
-                sounds.killEnemy.play();
-            }
-
-            state.score += 10;
-            updateScoreboard();
-
-            const scoreLabel = createScoreLabel(alien);
-            animateScoreLabel(scoreLabel, alien);
-
-            setTimeout(() => {
-                alien.element.remove();
-            }, 500);
-
-            bullet.element.remove();
-            return false;
-        }
-        return true;
-    });
-}
-
-function createScoreLabel(alien) {
+export function createScoreLabel(alien) {
     const scoreLabel = document.createElement('div');
     scoreLabel.classList.add('score-label');
     scoreLabel.textContent = '+10';
@@ -323,7 +177,7 @@ function createScoreLabel(alien) {
     return scoreLabel;
 }
 
-function animateScoreLabel(scoreLabel, alien) {
+export function animateScoreLabel(scoreLabel, alien) {
     setTimeout(() => {
         scoreLabel.style.transition = 'all 1s ease-out';
         scoreLabel.style.top = `${alien.y - 30}px`;
@@ -335,52 +189,11 @@ function animateScoreLabel(scoreLabel, alien) {
     }, 1000);
 }
 
-function updateEnemyShooting() {
-    if (gameObjects.aliens.length === 0) return;
 
-    const randomAlienIndex = Math.floor(Math.random() * gameObjects.aliens.length);
-    const alien = gameObjects.aliens[randomAlienIndex];
 
-    if (Math.random() < 0.01) {
-        const bullet = document.createElement('div');
-        bullet.classList.add('enemy-bullet');
-        bullet.style.left = `${alien.x + 20}px`;
-        bullet.style.top = `${alien.y + 20}px`;
 
-        elements.container.appendChild(bullet);
 
-        gameObjects.bullets.push({
-            element: bullet,
-            x: alien.x,
-            y: alien.y,
-            isEnemyBullet: true
-        });
-    }
-}
-
-function loseLife() {
-    state.lives--;
-    updateScoreboard();
-    if (input.sound) {
-        sounds.loseLife.currentTime = 0;
-        sounds.loseLife.play();
-    }
-
-    flashPlayer();
-
-    if (state.lives <= 0) {
-        gameOver();
-    }
-}
-
-function flashPlayer() {
-    elements.player.classList.add('flash');
-    setTimeout(() => {
-        elements.player.classList.remove('flash');
-    }, 300);
-}
-
-function updateScoreboard() {
+export function updateScoreboard() {
     elements.scoreBoard.timer.textContent = `Time: ${state.timeRemaining}`;
     elements.scoreBoard.score.textContent = `Score: ${state.score}`;
     elements.scoreBoard.lives.textContent = `Lives: ${state.lives}`;
@@ -395,9 +208,7 @@ function checkTopScore() {
 }
 
 function gameLoop(timestamp) {
-    //const deltaTime = timestamp - performance.lastFrameTime;
-    performance.lastFrameTime = timestamp;
-
+  
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
         updateBullets();
@@ -413,7 +224,7 @@ function startGameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-function gameOver() {
+export function gameOver() {
     state.isRunning = false;
     state.isPaused = true;
 
@@ -467,7 +278,7 @@ function createOverlay(title, score, buttonColor, isTop = false) {
             console.log('--');
             nextLevel();
         } else {
-            console.log('+++');   
+            console.log('+++');
             restartGame()
         }
     });
@@ -519,6 +330,7 @@ function restartGame() {
 
 // Initialize game when DOM is loaded 
 document.addEventListener('DOMContentLoaded', () => {
+    //initializeElements();
     setupEventListeners();
     initializeGame();
 });
