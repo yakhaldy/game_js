@@ -161,7 +161,6 @@ function startTimer() {
         }
     }, 1000);
 }
-
 export function createScoreLabel(alien) {
     const scoreLabel = document.createElement('div');
     scoreLabel.classList.add('score-label');
@@ -171,7 +170,6 @@ export function createScoreLabel(alien) {
     elements.container.appendChild(scoreLabel);
     return scoreLabel;
 }
-
 export function animateScoreLabel(scoreLabel, alien) {
     setTimeout(() => {
         scoreLabel.style.transition = 'all 1s ease-out';
@@ -183,7 +181,6 @@ export function animateScoreLabel(scoreLabel, alien) {
         scoreLabel.remove();
     }, 1000);
 }
-
 export function updateScoreboard() {
     elements.scoreBoard.timer.textContent = `Time: ${state.timeRemaining}`;
     elements.scoreBoard.score.textContent = `Score: ${state.score}`;
@@ -191,13 +188,11 @@ export function updateScoreboard() {
     elements.scoreBoard.Level.textContent = `Level: ${state.currentLevel}`
     checkTopScore();
 }
-
 function checkTopScore() {
     if (state.score >= 500) {
         showGameTop();
     }
 }
-
 function gameLoop(timestamp) {
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
@@ -209,11 +204,9 @@ function gameLoop(timestamp) {
 
     requestAnimationFrame(gameLoop);
 }
-
 function startGameLoop() {
     requestAnimationFrame(gameLoop);
 }
-
 export function gameOver() {
     state.isRunning = false;
     state.isPaused = true;
@@ -221,7 +214,6 @@ export function gameOver() {
     const overlay = createOverlay('Game Over', state.score, '#ff4d4d');
     elements.container.appendChild(overlay);
 }
-
 function showGameTop() {
     state.isRunning = false;
     state.isPaused = true;
@@ -229,7 +221,6 @@ function showGameTop() {
     const overlay = createOverlay('Congratulations!', state.score, '#4CAF50', true);
     elements.container.appendChild(overlay);
 }
-
 function createOverlay(title, score, buttonColor, isTop = false) {
     const overlay = document.createElement('div');
     overlay.classList.add(isTop ? 'congratulations-overlay' : 'game-over-overlay');

@@ -1,22 +1,16 @@
 import { elements, gameObjects, config, performance, updateScoreboard, animateScoreLabel, createScoreLabel, input, sounds, state, gameOver } from './game.js';
 
-
 export function updatePlayerMovement() {
-    const containerXY = elements.container.getBoundingClientRect()
     const playerXY = elements.player.getBoundingClientRect();
-    const playerSpeed = config.PLAYER_SPEED
-
-    if (input.left) {
-        if (playerXY.left - playerSpeed >= containerXY.left) {
-            elements.player.style.left = `${playerXY.left - containerXY.left - playerSpeed}px`;
-        }
+    const containerXY = elements.container.getBoundingClientRect();
+    const playerSpeed = config.PLAYER_SPEED;
+    const currentLeft = parseInt(elements.player.style.left || '375');
+    if (input.left && playerXY.left - playerSpeed >= containerXY.left) {
+        elements.player.style.left = `${currentLeft - playerSpeed}px`;
     }
-    if (input.right) {
-        if (playerXY.right + playerSpeed <= containerXY.right) {
-            elements.player.style.left = `${playerXY.left - containerXY.left + playerSpeed}px`;
-        }
+    if (input.right && playerXY.right + playerSpeed <= containerXY.right) {
+        elements.player.style.left = `${currentLeft + playerSpeed}px`;
     }
- 
 }
 
 export function tryShoot() {
