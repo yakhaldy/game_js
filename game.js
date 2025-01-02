@@ -19,7 +19,8 @@ export const config = {
     },
 
     PLAYER_SPEED: 5,
-    BULLET_SPEED: 10
+    BULLET_SPEED: 10,
+    RANDOM_BULLET: 0.01
 
 };
 
@@ -274,6 +275,7 @@ function nextLevel() {
     state.isPaused = false;
     state.isRunning = true;
     config.BULLET_SPEED += 3
+    config. RANDOM_BULLET += 0.01
     enemySpeed += 0.5
 
     resetGameState();

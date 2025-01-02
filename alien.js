@@ -61,7 +61,7 @@ export function updateEnemyShooting() {
     const randomAlienIndex = Math.floor(Math.random() * gameObjects.aliens.length);
     const alien = gameObjects.aliens[randomAlienIndex];
 
-    if (Math.random() < 0.01) {
+    if (Math.random() < config. RANDOM_BULLET) {
         const bullet = document.createElement('div');
         bullet.classList.add('enemy-bullet');
         bullet.style.left = `${alien.x + 20}px`;
