@@ -17,7 +17,7 @@ export const config = {
     get GAME_HEIGHT() {
         return elements.container.clientHeight;
     },
-
+    MAX_LEVEL: 50,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
     RANDOM_BULLET: 0.01
@@ -194,7 +194,7 @@ export function updateScoreboard() {
     checkTopScore();
 }
 function checkTopScore() {
-    if (state.score >= 500) {
+    if (state.score >= config.MAX_LEVEL) {
         showGameTop();
     }
 }
@@ -222,11 +222,20 @@ export function gameOver() {
 function showGameTop() {
     state.isRunning = false;
     state.isPaused = true;
-
+    if (state.currentLevel >= 10) {
+        endOfGmae()
+        return;
+    }
     const overlay = createOverlay('Congratulations!', state.score, '#4CAF50', true);
     elements.container.appendChild(overlay);
 }
 function createOverlay(title, score, buttonColor, isTop = false) {
+    let text
+    if (title == 'Game Over'){
+        text = 'Try again'
+    } else {
+        text = 'Next level'
+    }
     const overlay = document.createElement('div');
     overlay.classList.add(isTop ? 'congratulations-overlay' : 'game-over-overlay');
     overlay.style.cssText = `
@@ -255,7 +264,7 @@ function createOverlay(title, score, buttonColor, isTop = false) {
             border: none;
             border-radius: 5px;
             cursor: pointer;
-        ">Restart Game</button>
+        ">${text}</button>
     `;
 
     overlay.querySelector('#restart-game-btn').addEventListener('click', () => {
@@ -269,7 +278,8 @@ function createOverlay(title, score, buttonColor, isTop = false) {
 
     return overlay;
 }
-function nextLevel() {
+function nextLevel() {    
+    
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -291,6 +301,34 @@ function nextLevel() {
     });
 
     updateScoreboard();
+}
+function endOfGmae() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    const congratulationsOverlay = document.createElement('div');
+    congratulationsOverlay.classList.add('congratulations-overlay');
+
+    const message = document.createElement('h1');
+    message.textContent = 'Congratulations! You completed the game!';
+    congratulationsOverlay.appendChild(message);
+
+    const restartButton = document.createElement('button');
+    restartButton.textContent = 'Restart Game';
+    restartButton.classList.add('restart-button');
+    restartButton.addEventListener('click', () => {
+        location.reload()
+    });
+    congratulationsOverlay.appendChild(restartButton);
+
+    elements.container.innerHTML = '';
+    elements.container.appendChild(congratulationsOverlay);
+
+    state.isRunning = false;
+    state.isPaused = true;
+    return;
 }
 function restartGame() {
     if (timerInterval) {

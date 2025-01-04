@@ -1,4 +1,4 @@
-import { elements, gameObjects, enemySpeed, config, gameOver } from './game.js';
+import { elements, gameObjects, enemySpeed, config,state } from './game.js';
 
 let enemyDirection = 1;
 
@@ -11,7 +11,7 @@ export function spawnAliens() {
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const alien = document.createElement('img');
-            if (row == 0){
+            if (row == 0&& state.currentLevel >2){
                 alien.src = 'alien2.png';
                 alien.dataset.type = '2'
             }else {
