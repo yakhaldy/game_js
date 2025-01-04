@@ -4,12 +4,20 @@ export function updatePlayerMovement() {
     const playerXY = elements.player.getBoundingClientRect();
     const containerXY = elements.container.getBoundingClientRect();
     const playerSpeed = config.PLAYER_SPEED;
-    const currentLeft = parseInt(elements.player.style.left || '375');
+    const currentX = parseInt(elements.player.dataset.currentX || '0');
+
+    let newX = currentX;
+
     if (input.left && playerXY.left - playerSpeed >= containerXY.left) {
-        elements.player.style.left = `${currentLeft - playerSpeed}px`;
+        newX = currentX - playerSpeed;
     }
     if (input.right && playerXY.right + playerSpeed <= containerXY.right) {
-        elements.player.style.left = `${currentLeft + playerSpeed}px`;
+        newX = currentX + playerSpeed;
+    }
+
+    if (newX !== currentX) {
+        elements.player.style.transform = `translateX(${newX}px)`;
+        elements.player.dataset.currentX = newX.toString();
     }
 }
 
@@ -17,28 +25,33 @@ export function tryShoot() {
     const currentTime = Date.now();
     if (currentTime - performance.lastShootTime < 250) return;
 
-    const playerLeft = parseInt(elements.player.style.left || '375');
-    const playerWidth = elements.player.offsetWidth;
-    const bulletStartX = playerLeft + (playerWidth / 2) - 2.5;
+    const playerXY = elements.player.getBoundingClientRect();
+    const containerRect = elements.container.getBoundingClientRect();
+    
+    const bulletStartX = playerXY.left + (playerXY.width / 2) - containerRect.left - 2.5;
     const bulletStartY = config.GAME_HEIGHT - 70;
 
     const bullet = document.createElement('div');
     bullet.classList.add('bullet');
-    bullet.style.left = `${bulletStartX}px`;
+
+    bullet.style.transform = `translateX(${bulletStartX}px)`;
     bullet.style.top = `${bulletStartY}px`;
+
+    bullet.style.willChange = 'transform';
     elements.container.appendChild(bullet);
 
     gameObjects.bullets.push({
         element: bullet,
         x: bulletStartX,
-        y: bulletStartY
+        y: bulletStartY,
+        initialY: bulletStartY
     });
 
     performance.lastShootTime = currentTime;
 }
 
-
 function checkBulletAlienCollision(bullet) {
+
     gameObjects.aliens = gameObjects.aliens.filter(alien => {
         const alienRect = alien.element.getBoundingClientRect();
         const bulletRect = bullet.element.getBoundingClientRect();
@@ -130,3 +143,4 @@ export function updateBullets() {
         return true;
     });
 }
+

@@ -163,6 +163,7 @@ function startTimer() {
     }, 1000);
 }
 export function createScoreLabel(alien) {
+    
     const scoreLabel = document.createElement('div');
     scoreLabel.classList.add('score-label');
     scoreLabel.textContent = '+10';

@@ -65,6 +65,7 @@ box-shadow: 0 0 10px red; /* light border effect */
     height: 40px;
     bottom: 20px;
     left: calc(50% - 20px); /* Center player horizontally */
+    transform: translateX(-50%); /* ????? */
 }
 
 .alien {
@@ -73,6 +74,7 @@ box-shadow: 0 0 10px red; /* light border effect */
 }
 
 .bullet {
+    position: absolute;
     width: 5px;
     height: 15px;
     background-color: white;

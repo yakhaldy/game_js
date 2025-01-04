@@ -11,14 +11,18 @@ export function spawnAliens() {
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const alien = document.createElement('img');
-            alien.src = 'alien.png';
+            if (row == 0){
+                alien.src = 'alien2.png';
+        
+            }else {
+                alien.src = 'alien.png';
+            }
             alien.classList.add('alien');
             alien.style.width = `${alienWidth}px`;
             alien.style.height = `${alienHeight}px`;
             alien.style.left = `${col * 60 + 100}px`;
             alien.style.top = `${row * 60 + 50}px`;
             elements.container.appendChild(alien);
-
             gameObjects.aliens.push({
                 element: alien,
                 x: col * 60 + 100,
