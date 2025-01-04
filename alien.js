@@ -13,9 +13,10 @@ export function spawnAliens() {
             const alien = document.createElement('img');
             if (row == 0){
                 alien.src = 'alien2.png';
-        
+                alien.dataset.type = '2'
             }else {
                 alien.src = 'alien.png';
+                alien.dataset.type = '1'
             }
             alien.classList.add('alien');
             alien.style.width = `${alienWidth}px`;
@@ -33,7 +34,6 @@ export function spawnAliens() {
 }
 
 export function updateAliens() {
-
     gameObjects.aliens.forEach((alien) => {
         alien.x += enemyDirection * enemySpeed;
         alien.element.style.left = `${alien.x}px`;
@@ -45,17 +45,17 @@ export function updateAliens() {
 
     if (aliensAtEdge) {
         enemyDirection *= -1;
-        gameObjects.aliens.forEach((alien) => {
-            alien.y += 20; /// mochkil
-            alien.element.style.top = `${alien.y}px`;
-        });
+        // gameObjects.aliens.forEach((alien) => {
+        //     alien.y += 20; /// mochkil
+        //     alien.element.style.top = `${alien.y}px`;
+        // });
     }
-    gameObjects.aliens.forEach((alien) => {
-        if (alien.y + alien.element.offsetHeight >= config.GAME_HEIGHT) {
-            gameOver();
-            alien.element.remove()
-        }
-    });
+    // gameObjects.aliens.forEach((alien) => {
+    //     if (alien.y + alien.element.offsetHeight >= config.GAME_HEIGHT) {
+    //         gameOver();
+    //         alien.element.remove()
+    //     }
+    // });
 
 }
 
@@ -65,7 +65,7 @@ export function updateEnemyShooting() {
     const randomAlienIndex = Math.floor(Math.random() * gameObjects.aliens.length);
     const alien = gameObjects.aliens[randomAlienIndex];
 
-    if (Math.random() < config. RANDOM_BULLET) {
+    if (Math.random() < config.RANDOM_BULLET) {
         const bullet = document.createElement('div');
         bullet.classList.add('enemy-bullet');
         bullet.style.left = `${alien.x + 20}px`;

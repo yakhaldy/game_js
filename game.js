@@ -110,8 +110,7 @@ function toggleSound() {
     if (input.sound) {
         const testSound = sounds.killEnemy;
         testSound.currentTime = 0;
-        //testSound.volume = 0.2; // Lower volume for test sound
-        testSound.play().catch(error => console.log('Error playing sound:', error));
+        testSound.play()
     }
 }
 function initializeGame() {
@@ -166,7 +165,11 @@ export function createScoreLabel(alien) {
     
     const scoreLabel = document.createElement('div');
     scoreLabel.classList.add('score-label');
-    scoreLabel.textContent = '+10';
+    if (alien.element.dataset.type === '1'){
+        scoreLabel.textContent = '+10';
+    }else {
+        scoreLabel.textContent = '+20';
+    }
     scoreLabel.style.left = `${alien.x + 20}px`;
     scoreLabel.style.top = `${alien.y + 20}px`;
     elements.container.appendChild(scoreLabel);

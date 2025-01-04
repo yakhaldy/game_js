@@ -62,8 +62,12 @@ function checkBulletAlienCollision(bullet) {
                 sounds.killEnemy.currentTime = 0;
                 sounds.killEnemy.play();
             }
-
-            state.score += 10;
+            
+            if (alien.element.dataset.type === '1'){
+                state.score += 10;
+            } else {
+                state.score += 20;
+            }
             updateScoreboard();
 
             const scoreLabel = createScoreLabel(alien);
