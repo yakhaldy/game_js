@@ -4,40 +4,53 @@
     <meta charset="UTF-8">
     <title>Space Invaders</title>
     <link rel="stylesheet" href="/style.css">
+
    
 </head>
+
 <body>
+    <button id="menu-toggle-btn">PAUSE MENU</button>
+    <button id="Sound"></button> 
     <div id="game-container">
+
         <div id="scoreboard">
-            <div id="Level">Level :1</div>
+            <div id="fps">FPS: 60</div>
+
+            <div id="Level">Level: 1</div>
             <div id="score">Score: 0</div>
-            <div id="timer" class="timer">Time: 60</div>
+            <div id="timer" class="timer">Time:</div>
             <div id="lives">Lives: 3</div>
         </div>
 
         <div>
-            <img src="jet.png" alt="" id="player">
+            <img src="favicon.ico" alt="" id="player">
         </div>
 
         <div id="pause-menu">
             <h2>PAUSE MENU</h2>
             <button id="continue-btn">Continue</button>
-            <button id="restart-btn">Restart</button> 
+            <button id="restart-btn">Restart</button>
+       
         </div>
+       
+        
     </div>
+
 
     <!-- Instructions Div at the bottom-left -->
     <div id="game-instructions">
-        <button id="Sound">Sound: On</button>
+       
+      
         <h3>Game Controls</h3>
         <ul>
-            <li><i class="fas fa-arrow-left icon icon-left"></i><span>Move Left</span></li>
-            <li><i class="fas fa-arrow-right icon icon-right"></i><span>Move Right</span></li>
-            <li><i class="fas fa-space-shuttle icon icon-pause"></i><span>Shoot (Press Space bar) </span></li>
-            <li><i class="fas fa-pause icon icon-pause"></i><span>Pause (Press Esc)</span></li>
+            <li><span>Move Left</span></li>
+            <li><span>Move Right</span></li>
+            <li><span>Shoot (Press Space bar) </span></li>
+            <li><span>Pause (Press Esc)</span></li>
             <li><span>Sound (Press q)</span></li>
         </ul>
     </div>
+
 
     <script type="module" src="game.js"></script>
 </body>

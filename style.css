@@ -37,16 +37,12 @@ box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6); /* Light glowing effect */
     z-index: 10;
 }
 
-#score, #lives, #timer {
-    font-size: 24px;
+#score, #lives, #timer, #fps , #Level  {
+    font-size: 20px;
 }
 
-#timer {
-font-size: 28px;
-color: green;
-padding: 10px;
-border-radius: 5px;
-transition: all 0.3s ease;
+#timer{
+    color: rgb(39, 97, 0);
 }
 
 #timer.low-time {
@@ -121,7 +117,22 @@ box-shadow: 0 0 10px red; /* light border effect */
 #pause-menu button:hover {
     background-color: #555;
 }
+#menu-toggle-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #1b1b1b;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+#menu-toggle-btn:hover {
+    background-color: #555;
+}
 /* Flashing timer effect */
 .flash {
     animation: flashEffect 0.3s ease-in-out infinite;
@@ -177,19 +188,7 @@ box-shadow: 0 0 10px red; /* light border effect */
     margin-left: 10px;
 }
 
-/* Icons style */
-.icon {
-    font-size: 20px;
-    color: white;
-}
 
-.icon-left, .icon-right {
-    margin-right: 5px;
-}
-
-.icon-pause {
-    margin-left: 5px;
-}
 @keyframes explode {
 0% {
 transform: scale(1);

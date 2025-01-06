@@ -17,7 +17,7 @@ export const config = {
     get GAME_HEIGHT() {
         return elements.container.clientHeight;
     },
-    MAX_LEVEL: 50,
+    MAX_LEVEL: 500,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
     RANDOM_BULLET: 0.01
@@ -61,6 +61,27 @@ export const gameObjects = {
     bullets: [],
     aliens: []
 };
+function fpsMeter() {
+    var divFps = document.getElementById('fps') ;
+      let prevTime = Date.now(),
+          frames = 0;
+  
+      requestAnimationFrame(function loop() {
+        const time = Date.now();
+        frames++;
+        if (time > prevTime + 1000) {
+          let fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
+          prevTime = time;
+          frames = 0;
+          divFps.innerHTML = `FPS: ${fps}`;
+          //console.info('FPS: ', fps);
+        }
+  
+        requestAnimationFrame(loop);
+      });
+    }
+    
+fpsMeter();
 
 // Game functions
 function setupEventListeners() {
@@ -103,6 +124,7 @@ function updateSoundDisplay() {
         soundButton.style.backgroundColor = input.sound ? '#4CAF50' : '#ff4d4d';
     }
 }
+
 function toggleSound() {
     input.sound = !input.sound;
     updateSoundDisplay();
@@ -147,19 +169,29 @@ function togglePause() {
 
     elements.pauseMenu.style.display = state.isPaused ? 'block' : 'none';
 }
+
+document.getElementById('menu-toggle-btn').addEventListener('click', togglePause);
+
 function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
-
+    elements.scoreBoard.timer.classList.remove('low-time');
     timerInterval = setInterval(() => {
         if (!state.isPaused) {
             if (state.timeRemaining <= 0) {
                 clearInterval(timerInterval);
+            
                 gameOver();
+            }
+            if (state.timeRemaining <= 10 ){
+                elements.scoreBoard.timer.classList.add('low-time')
+            } else {
+                elements.scoreBoard.timer.classList.remove('low-time');
             }
             state.timeRemaining--;
             updateScoreboard();
         }
     }, 1000);
+
 }
 export function createScoreLabel(alien) {
     
@@ -350,6 +382,7 @@ function restartGame() {
 
     updateScoreboard();
 }
+
 
 // Initialize game when DOM is loaded 
 document.addEventListener('DOMContentLoaded', () => {
