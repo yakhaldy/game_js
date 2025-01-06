@@ -17,7 +17,7 @@ export const config = {
     get GAME_HEIGHT() {
         return elements.container.clientHeight;
     },
-    MAX_LEVEL: 500,
+    MAX_SCORE: 50,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
     RANDOM_BULLET: 0.01
@@ -61,27 +61,7 @@ export const gameObjects = {
     bullets: [],
     aliens: []
 };
-function fpsMeter() {
-    var divFps = document.getElementById('fps') ;
-      let prevTime = Date.now(),
-          frames = 0;
-  
-      requestAnimationFrame(function loop() {
-        const time = Date.now();
-        frames++;
-        if (time > prevTime + 1000) {
-          let fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
-          prevTime = time;
-          frames = 0;
-          divFps.innerHTML = `FPS: ${fps}`;
-          //console.info('FPS: ', fps);
-        }
-  
-        requestAnimationFrame(loop);
-      });
-    }
-    
-fpsMeter();
+
 
 // Game functions
 function setupEventListeners() {
@@ -175,6 +155,7 @@ document.getElementById('menu-toggle-btn').addEventListener('click', togglePause
 function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
     elements.scoreBoard.timer.classList.remove('low-time');
+    elements.container.classList.remove('low-time');
     timerInterval = setInterval(() => {
         if (!state.isPaused) {
             if (state.timeRemaining <= 0) {
@@ -184,8 +165,12 @@ function startTimer() {
             }
             if (state.timeRemaining <= 10 ){
                 elements.scoreBoard.timer.classList.add('low-time')
+                elements.container.classList.add('low-time');
+
             } else {
                 elements.scoreBoard.timer.classList.remove('low-time');
+                elements.container.classList.remove('low-time');
+
             }
             state.timeRemaining--;
             updateScoreboard();
@@ -221,15 +206,64 @@ export function animateScoreLabel(scoreLabel, alien) {
 export function updateScoreboard() {
     elements.scoreBoard.timer.textContent = `Time: ${state.timeRemaining}`;
     elements.scoreBoard.score.textContent = `Score: ${state.score}`;
-    elements.scoreBoard.lives.textContent = `Lives: ${state.lives}`;
     elements.scoreBoard.Level.textContent = `Level: ${state.currentLevel}`
+    updateLivesDisplay();
     checkTopScore();
 }
 function checkTopScore() {
-    if (state.score >= config.MAX_LEVEL) {
+    if (state.score >= config.MAX_SCORE) {
         showGameTop();
     }
 }
+
+
+
+
+
+export function updateLivesDisplay() {
+    const livesContainer = document.getElementById('lives-container');
+    livesContainer.innerHTML = ''; // Clear existing hearts
+
+    for (let i = 0; i < 3; i++) { // Loop through maxLives
+        const heart = document.createElement('img');
+        
+        // If we still have this life, display the regular heart
+        if (i < state.lives) {
+            heart.src = 'heart.png'; // For remaining lives
+        } else {
+            heart.src = 'heart-lose.png'; // For lost lives
+        }
+
+        heart.alt = 'Heart';
+        heart.width = 20; // Ensure consistent size
+        livesContainer.appendChild(heart);
+    }
+}
+
+
+
+
+
+
+function fpsMeter() {
+    var divFps = document.getElementById('fps') ;
+      let prevTime = Date.now(),
+          frames = 0;
+  
+      requestAnimationFrame(function loop() {
+        const time = Date.now();
+        frames++;
+        if (time > prevTime + 1000) {
+          let fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) ) ;
+          prevTime = time;
+          frames = 0;
+          divFps.innerHTML = `FPS: ${fps}`;
+          console.info('FPS: ', fps);
+        }
+  
+        requestAnimationFrame(loop);
+      });
+    }
 function gameLoop(timestamp) {
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
@@ -238,6 +272,7 @@ function gameLoop(timestamp) {
         updateEnemyShooting();
         updateScoreboard();
     }
+    
 
     requestAnimationFrame(gameLoop);
 }
@@ -390,4 +425,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     startTimer()
     initializeGame();
+    fpsMeter(); 
 });

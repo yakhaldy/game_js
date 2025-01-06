@@ -91,6 +91,8 @@ export function isColliding(rect1, rect2) {
 }
 
 function loseLife() {
+
+ 
     state.lives--;
     updateScoreboard();
     if (input.sound) {
@@ -107,8 +109,12 @@ function loseLife() {
 
 function flashPlayer() {
     elements.player.classList.add('flash');
+    elements.container.classList.add('low-time');
+    elements.scoreBoard.lives.classList.add('lose-live');
     setTimeout(() => {
         elements.player.classList.remove('flash');
+        elements.container.classList.remove('low-time');
+        elements.scoreBoard.lives.classList.remove('lose-live');
     }, 300);
 }
 

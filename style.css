@@ -20,6 +20,23 @@ margin-top: 20px; /* Adjust this for spacing from the top */
 border: 2px solid white; /* Keep the white border */
 box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6); /* Light glowing effect */
 }
+#game-container.low-time {
+    border: 2px solid rgb(255, 0, 0); /* Base red border */
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.6); /* Light glowing effect */
+    animation: flash 0.5s infinite alternate; /* Apply the flashing animation */
+}
+
+/* Define the flashing animation */
+@keyframes flash {
+    0% {
+        border-color: rgba(255, 0, 0, 1); /* Bright red */
+        box-shadow: 0 0 15px 10px rgba(255, 0, 0, 0.9); /* Intense glow */
+    }
+    100% {
+        border-color: rgba(255, 0, 0, 0.5); /* Dimmer red */
+        box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.3); /* Subtle glow */
+    }
+}
 /* Scoreboard at the top of the game frame */
 #scoreboard {
     position: absolute;
@@ -41,16 +58,23 @@ box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6); /* Light glowing effect */
     font-size: 20px;
 }
 
-#timer{
-    color: rgb(39, 97, 0);
-}
+
 
 #timer.low-time {
 color: red;
-border: 2px solid red;
-box-shadow: 0 0 10px red; /* light border effect */
 }
-
+#lives.lose-live {
+color: red;
+ }
+ #lives-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+#lives-container img {
+    width: 40px;
+    height: auto;
+}
 /* Fullscreen player and bullet styles */
 #player, .alien, .bullet {
     position: absolute;
