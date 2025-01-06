@@ -17,7 +17,7 @@ export const config = {
     get GAME_HEIGHT() {
         return elements.container.clientHeight;
     },
-    MAX_SCORE: 50,
+    MAX_SCORE: 500,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
     RANDOM_BULLET: 0.01
