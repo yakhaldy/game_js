@@ -314,3 +314,54 @@ z-index: 1000;
         justify-content: center; 
     }
 }
+
+/********************/
+#background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; 
+}
+
+#start {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.8); 
+    z-index: 100000; 
+}
+#start p {
+    font-size: 40px; 
+    font-weight: bold; 
+    color: white; 
+    text-align: center;
+    text-shadow: 4px 4px 10px rgba(129, 127, 127, 0.7); 
+    margin-top: 20px; 
+}
+
+
+#startButton {
+    padding: 15px 30px;
+    font-size: 20px;
+    color: #555;
+    background-color: rgba(3, 3, 3, 0.8); 
+    border: solid white 1px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+#startButton:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    transform: scale(1.1);
+}

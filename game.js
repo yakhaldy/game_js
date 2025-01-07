@@ -264,7 +264,7 @@ function fpsMeter() {
         requestAnimationFrame(loop);
     });
 }
-function gameLoop(timestamp) {
+function gameLoop() {
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
         updateBullets();
@@ -444,7 +444,6 @@ function updateAlienPositions() {
         
         const alienLeft = offsetX + col * alienWidth;
         const alienTop = offsetY + row * alienHeight;
-        
         // Update size and position
         alien.element.style.width = `${alienWidth}px`;
         alien.element.style.height = `${alienHeight}px`;
@@ -457,11 +456,18 @@ function updateAlienPositions() {
     });
 }
 
+const video = document.getElementById("background-video");
+document.getElementById('startButton').addEventListener('click', function() {
+    const startScreen = document.getElementById('start');
+    startScreen.style.display = 'none';
+    video.pause();
+    initializeGame();
+});
+
 
 // Initialize game when DOM is loaded 
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     startTimer()
-    initializeGame();
     fpsMeter();
 });
