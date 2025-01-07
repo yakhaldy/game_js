@@ -2,36 +2,6 @@ import { elements, gameObjects, enemySpeed, config,state } from './game.js';
 
 let enemyDirection = 1;
 
-// export function spawnAliens() {
-//     const rows = 5;
-//     const cols = 10;
-//     const alienWidth = config.GAME_WIDTH / (cols + 5);
-//     const alienHeight = config.GAME_HEIGHT / (rows + 15);
-
-//     for (let row = 0; row < rows; row++) {
-//         for (let col = 0; col < cols; col++) {
-//             const alien = document.createElement('img');
-//             if (row == 0&& state.currentLevel >2){
-//                 alien.src = 'alien2.png';
-//                 alien.dataset.type = '2'
-//             }else {
-//                 alien.src = 'alien.png';
-//                 alien.dataset.type = '1'
-//             }
-//             alien.classList.add('alien');
-//             alien.style.width = `${alienWidth}px`;
-//             alien.style.height = `${alienHeight}px`;
-//             alien.style.left = `${col * 60 + 100}px`;
-//             alien.style.top = `${row * 60 + 50}px`;
-//             elements.container.appendChild(alien);
-//             gameObjects.aliens.push({
-//                 element: alien,
-//                 x: col * 60 + 100,
-//                 y: row * 60 + 50
-//             });
-//         }
-//     }
-// }
 export function spawnAliens() {
     const rows = 5;
     const cols = 10;
@@ -39,9 +9,8 @@ export function spawnAliens() {
     const alienWidth = config.GAME_WIDTH / (cols + 5);
     const alienHeight = config.GAME_HEIGHT / (rows + 15);
     
-    // Adjust the starting position of aliens based on screen size
-    const offsetX = (config.GAME_WIDTH - (alienWidth * cols)) / 2;  // Center horizontally
-    const offsetY = (config.GAME_HEIGHT - (alienHeight * rows)) / 8;  // Position them higher vertically
+    const offsetX = (config.GAME_WIDTH - (alienWidth * cols)) / 2;  
+    const offsetY = (config.GAME_HEIGHT - (alienHeight * rows)) / 8;  
 
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -56,13 +25,13 @@ export function spawnAliens() {
             alien.classList.add('alien');
             alien.style.width = `${alienWidth}px`;
             alien.style.height = `${alienHeight}px`;
+            alien.style.willChange = 'transform';
 
-            // Calculate the exact position of the alien
             const alienLeft = offsetX + col * alienWidth;
             const alienTop = offsetY + row * alienHeight;
 
-            alien.style.left = `${alienLeft}px`;
-            alien.style.top = `${alienTop}px`;
+           
+            alien.style.transform = `translate(${alienLeft}px, ${alienTop}px)`;
 
             elements.container.appendChild(alien);
             gameObjects.aliens.push({
@@ -74,30 +43,23 @@ export function spawnAliens() {
     }
 }
 
+
 export function updateAliens() {
-    gameObjects.aliens.forEach((alien) => {
-        alien.x += enemyDirection * enemySpeed;
-        alien.element.style.left = `${alien.x}px`;
-    });
-
-    const aliensAtEdge = gameObjects.aliens.some((alien) =>
-        alien.x <= 0 || alien.x >= config.GAME_WIDTH - 50
-    );
-
-    if (aliensAtEdge) {
-        enemyDirection *= -1;
-        // gameObjects.aliens.forEach((alien) => {
-        //     alien.y += 20; /// mochkil
-        //     alien.element.style.top = `${alien.y}px`;
-        // });
-    }
-    // gameObjects.aliens.forEach((alien) => {
-    //     if (alien.y + alien.element.offsetHeight >= config.GAME_HEIGHT) {
-    //         gameOver();
-    //         alien.element.remove()
-    //     }
-    // });
-
+    const movement = enemyDirection * enemySpeed;
+    let needsDirectionChange = false;
+   // requestAnimationFrame(() => {
+        gameObjects.aliens.forEach((alien) => {
+            alien.x += movement; 
+            if (!needsDirectionChange) {
+                needsDirectionChange = alien.x <= 0 || alien.x >= config.GAME_WIDTH - 50;
+            }
+            alien.element.style.transform = `translate(${alien.x}px, ${alien.y}px)`;
+        });
+        
+        if (needsDirectionChange) {
+            enemyDirection *= -1;
+        }
+   // });
 }
 
 export function updateEnemyShooting() {
@@ -109,8 +71,8 @@ export function updateEnemyShooting() {
     if (Math.random() < config.RANDOM_BULLET) {
         const bullet = document.createElement('div');
         bullet.classList.add('enemy-bullet');
-        bullet.style.left = `${alien.x + 20}px`;
-        bullet.style.top = `${alien.y + 20}px`;
+        bullet.style.transform = `translate(${alien.x + 20}px, ${alien.y + 20}px)`;
+        bullet.style.willChange = 'transform';
 
         elements.container.appendChild(bullet);
 

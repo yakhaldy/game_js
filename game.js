@@ -241,29 +241,6 @@ export function updateLivesDisplay() {
 }
 
 
-
-
-
-
-function fpsMeter() {
-    var divFps = document.getElementById('fps');
-    let prevTime = Date.now(),
-        frames = 0;
-
-    requestAnimationFrame(function loop() {
-        const time = Date.now();
-        frames++;
-        if (time > prevTime + 1000) {
-            let fps = Math.round((frames * 1000) / (time - prevTime));
-            prevTime = time;
-            frames = 0;
-            divFps.innerHTML = `FPS: ${fps}`;
-            console.info('FPS: ', fps);
-        }
-
-        requestAnimationFrame(loop);
-    });
-}
 function gameLoop() {
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
@@ -447,10 +424,8 @@ function updateAlienPositions() {
         // Update size and position
         alien.element.style.width = `${alienWidth}px`;
         alien.element.style.height = `${alienHeight}px`;
-        alien.element.style.left = `${alienLeft}px`;
-        alien.element.style.top = `${alienTop}px`;
-        
-        // Update game state
+        alien.element.style.transform = `translate(${alienLeft}px, ${alienTop}px)`;
+
         alien.x = alienLeft;
         alien.y = alienTop;
     });
@@ -469,5 +444,4 @@ document.getElementById('startButton').addEventListener('click', function() {
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     startTimer()
-    fpsMeter();
 });
