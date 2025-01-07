@@ -160,10 +160,10 @@ function startTimer() {
         if (!state.isPaused) {
             if (state.timeRemaining <= 0) {
                 clearInterval(timerInterval);
-            
+
                 gameOver();
             }
-            if (state.timeRemaining <= 10 ){
+            if (state.timeRemaining <= 10) {
                 elements.scoreBoard.timer.classList.add('low-time')
                 elements.container.classList.add('low-time');
 
@@ -179,12 +179,12 @@ function startTimer() {
 
 }
 export function createScoreLabel(alien) {
-    
+
     const scoreLabel = document.createElement('div');
     scoreLabel.classList.add('score-label');
-    if (alien.element.dataset.type === '1'){
+    if (alien.element.dataset.type === '1') {
         scoreLabel.textContent = '+10';
-    }else {
+    } else {
         scoreLabel.textContent = '+20';
     }
     scoreLabel.style.left = `${alien.x + 20}px`;
@@ -226,7 +226,7 @@ export function updateLivesDisplay() {
 
     for (let i = 0; i < 3; i++) { // Loop through maxLives
         const heart = document.createElement('img');
-        
+
         // If we still have this life, display the regular heart
         if (i < state.lives) {
             heart.src = 'heart.png'; // For remaining lives
@@ -246,24 +246,24 @@ export function updateLivesDisplay() {
 
 
 function fpsMeter() {
-    var divFps = document.getElementById('fps') ;
-      let prevTime = Date.now(),
-          frames = 0;
-  
-      requestAnimationFrame(function loop() {
+    var divFps = document.getElementById('fps');
+    let prevTime = Date.now(),
+        frames = 0;
+
+    requestAnimationFrame(function loop() {
         const time = Date.now();
         frames++;
         if (time > prevTime + 1000) {
-          let fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) ) ;
-          prevTime = time;
-          frames = 0;
-          divFps.innerHTML = `FPS: ${fps}`;
-          console.info('FPS: ', fps);
+            let fps = Math.round((frames * 1000) / (time - prevTime));
+            prevTime = time;
+            frames = 0;
+            divFps.innerHTML = `FPS: ${fps}`;
+            console.info('FPS: ', fps);
         }
-  
+
         requestAnimationFrame(loop);
-      });
-    }
+    });
+}
 function gameLoop(timestamp) {
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
@@ -272,7 +272,7 @@ function gameLoop(timestamp) {
         updateEnemyShooting();
         updateScoreboard();
     }
-    
+
 
     requestAnimationFrame(gameLoop);
 }
@@ -298,7 +298,7 @@ function showGameTop() {
 }
 function createOverlay(title, score, buttonColor, isTop = false) {
     let text
-    if (title == 'Game Over'){
+    if (title == 'Game Over') {
         text = 'Try again'
     } else {
         text = 'Next level'
@@ -345,8 +345,8 @@ function createOverlay(title, score, buttonColor, isTop = false) {
 
     return overlay;
 }
-function nextLevel() {    
-    
+function nextLevel() {
+
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -356,7 +356,7 @@ function nextLevel() {
     state.isPaused = false;
     state.isRunning = true;
     config.BULLET_SPEED += 3
-    config. RANDOM_BULLET += 0.01
+    config.RANDOM_BULLET += 0.01
     enemySpeed += 0.5
 
     resetGameState();
@@ -419,11 +419,49 @@ function restartGame() {
 }
 
 
+window.addEventListener('resize', () => {
+    updateAlienPositions()
+    updatePlayerSize()
+})
+function updatePlayerSize() {
+    const playerHeight = (config.GAME_HEIGHT * 6) / 100;
+    const playerWidth = (config.GAME_WIDTH * 6) / 100;
+    elements.player.style.height = `${playerHeight}px`;
+    elements.player.style.width = `${playerWidth}px`;
+}
+function updateAlienPositions() {
+    const rows = 5;
+    const cols = 10;
+    const alienWidth = config.GAME_WIDTH / (cols + 5);
+    const alienHeight = config.GAME_HEIGHT / (rows + 15);
+    
+    const offsetX = (config.GAME_WIDTH - (alienWidth * cols)) / 2;
+    const offsetY = (config.GAME_HEIGHT - (alienHeight * rows)) / 8;
+    
+    gameObjects.aliens.forEach((alien, index) => {
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+        
+        const alienLeft = offsetX + col * alienWidth;
+        const alienTop = offsetY + row * alienHeight;
+        
+        // Update size and position
+        alien.element.style.width = `${alienWidth}px`;
+        alien.element.style.height = `${alienHeight}px`;
+        alien.element.style.left = `${alienLeft}px`;
+        alien.element.style.top = `${alienTop}px`;
+        
+        // Update game state
+        alien.x = alienLeft;
+        alien.y = alienTop;
+    });
+}
+
+
 // Initialize game when DOM is loaded 
 document.addEventListener('DOMContentLoaded', () => {
-    //initializeElements();
     setupEventListeners();
     startTimer()
     initializeGame();
-    fpsMeter(); 
+    fpsMeter();
 });

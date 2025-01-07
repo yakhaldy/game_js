@@ -2,32 +2,73 @@ import { elements, gameObjects, enemySpeed, config,state } from './game.js';
 
 let enemyDirection = 1;
 
+// export function spawnAliens() {
+//     const rows = 5;
+//     const cols = 10;
+//     const alienWidth = config.GAME_WIDTH / (cols + 5);
+//     const alienHeight = config.GAME_HEIGHT / (rows + 15);
+
+//     for (let row = 0; row < rows; row++) {
+//         for (let col = 0; col < cols; col++) {
+//             const alien = document.createElement('img');
+//             if (row == 0&& state.currentLevel >2){
+//                 alien.src = 'alien2.png';
+//                 alien.dataset.type = '2'
+//             }else {
+//                 alien.src = 'alien.png';
+//                 alien.dataset.type = '1'
+//             }
+//             alien.classList.add('alien');
+//             alien.style.width = `${alienWidth}px`;
+//             alien.style.height = `${alienHeight}px`;
+//             alien.style.left = `${col * 60 + 100}px`;
+//             alien.style.top = `${row * 60 + 50}px`;
+//             elements.container.appendChild(alien);
+//             gameObjects.aliens.push({
+//                 element: alien,
+//                 x: col * 60 + 100,
+//                 y: row * 60 + 50
+//             });
+//         }
+//     }
+// }
 export function spawnAliens() {
     const rows = 5;
     const cols = 10;
+    
     const alienWidth = config.GAME_WIDTH / (cols + 5);
     const alienHeight = config.GAME_HEIGHT / (rows + 15);
+    
+    // Adjust the starting position of aliens based on screen size
+    const offsetX = (config.GAME_WIDTH - (alienWidth * cols)) / 2;  // Center horizontally
+    const offsetY = (config.GAME_HEIGHT - (alienHeight * rows)) / 8;  // Position them higher vertically
 
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            const alien = document.createElement('img');
-            if (row == 0&& state.currentLevel >2){
+            const alien = document.createElement('img');          
+            if (row == 0 && state.currentLevel > 2) {
                 alien.src = 'alien2.png';
-                alien.dataset.type = '2'
-            }else {
+                alien.dataset.type = '2';
+            } else {
                 alien.src = 'alien.png';
-                alien.dataset.type = '1'
+                alien.dataset.type = '1';
             }
             alien.classList.add('alien');
             alien.style.width = `${alienWidth}px`;
             alien.style.height = `${alienHeight}px`;
-            alien.style.left = `${col * 60 + 100}px`;
-            alien.style.top = `${row * 60 + 50}px`;
+
+            // Calculate the exact position of the alien
+            const alienLeft = offsetX + col * alienWidth;
+            const alienTop = offsetY + row * alienHeight;
+
+            alien.style.left = `${alienLeft}px`;
+            alien.style.top = `${alienTop}px`;
+
             elements.container.appendChild(alien);
             gameObjects.aliens.push({
                 element: alien,
-                x: col * 60 + 100,
-                y: row * 60 + 50
+                x: alienLeft,
+                y: alienTop
             });
         }
     }
