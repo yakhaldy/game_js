@@ -48,11 +48,13 @@ export function updateAliens() {
     const movement = enemyDirection * enemySpeed;
     let needsDirectionChange = false;
     gameObjects.aliens.forEach((alien) => {
-        alien.x += movement;
-        if (!needsDirectionChange) {
-            needsDirectionChange = alien.x <= 0 || alien.x >= config.GAME_WIDTH - 50;
+        if (!alien.element.classList.contains('destroyed')) {
+            alien.x += movement;
+            if (!needsDirectionChange) {
+                needsDirectionChange = alien.x <= 0 || alien.x >= config.GAME_WIDTH - 50;
+            }
+            alien.element.style.transform = `translate(${alien.x}px, ${alien.y}px)`;
         }
-        alien.element.style.transform = `translate(${alien.x}px, ${alien.y}px)`;
     });
 
     if (needsDirectionChange) {
