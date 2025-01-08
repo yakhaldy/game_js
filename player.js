@@ -33,10 +33,9 @@ export function tryShoot() {
 
     const bullet = document.createElement('div');
     bullet.classList.add('bullet');
-
-    bullet.style.transform = `translateX(${bulletStartX}px)`;
-    bullet.style.top = `${bulletStartY}px`;
-
+    
+    // Set initial position using transform
+    bullet.style.transform = `translate(${bulletStartX + 20}px, ${bulletStartY}px)`;
     bullet.style.willChange = 'transform';
     elements.container.appendChild(bullet);
 
@@ -50,6 +49,39 @@ export function tryShoot() {
     performance.lastShootTime = currentTime;
 }
 
+export function updateBullets() {
+    gameObjects.bullets = gameObjects.bullets.filter(bullet => {
+        const transform = getComputedStyle(bullet.element).transform;  
+        const matrix = new DOMMatrix(transform);
+        const currentY = matrix.m42; 
+        if (bullet.isEnemyBullet) {
+            const newY = currentY + config.BULLET_SPEED / 5;
+            bullet.element.style.transform = `translate(${matrix.m41}px, ${newY}px)`;
+
+            const playerRect = elements.player.getBoundingClientRect();
+            const bulletRect = bullet.element.getBoundingClientRect();
+
+            if (isColliding(playerRect, bulletRect)) {
+                bullet.element.remove();
+                loseLife();
+                return false;
+            }
+            if (newY > config.GAME_HEIGHT) {
+                bullet.element.remove();
+                return false;
+            }
+        } else {
+            const newY = currentY - config.BULLET_SPEED;
+            bullet.element.style.transform = `translate(${matrix.m41}px, ${newY}px)`;
+            if (newY < 0) {
+                bullet.element.remove();
+                return false;
+            }
+            checkBulletAlienCollision(bullet);
+        }
+        return true;
+    });
+}
 function checkBulletAlienCollision(bullet) {
      gameObjects.aliens.forEach(alien => {
         const alienRect = alien.element.getBoundingClientRect();
@@ -112,38 +144,5 @@ function flashPlayer() {
 }
 
 
-export function updateBullets() {
-    gameObjects.bullets = gameObjects.bullets.filter(bullet => {
-        const currentTop = parseFloat(bullet.element.style.top || 0);
 
-        if (bullet.isEnemyBullet) {
-            bullet.element.style.top = `${currentTop + config.BULLET_SPEED / 5}px`;
-
-            const playerRect = elements.player.getBoundingClientRect();
-            const bulletRect = bullet.element.getBoundingClientRect();
-
-            if (isColliding(playerRect, bulletRect)) {
-                bullet.element.remove();
-                loseLife();
-                return false;
-            }
-
-            if (currentTop > config.GAME_HEIGHT) {
-                bullet.element.remove();
-                return false;
-            }
-        } else {
-            bullet.element.style.top = `${currentTop - config.BULLET_SPEED}px`;
-
-            if (currentTop < 0) {
-                bullet.element.remove();
-                return false;
-            }
-
-            checkBulletAlienCollision(bullet);
-        }
-
-        return true;
-    });
-}
 

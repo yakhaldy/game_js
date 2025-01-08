@@ -134,7 +134,7 @@ function resetGameState() {
     gameObjects.bullets = [];
     gameObjects.aliens = [];
 
-    elements.player.style.left = '375px';
+    elements.player.style.left = `${config.GAME_WIDTH/2}px`;
 
     updateScoreboard();
     spawnAliens();
@@ -434,6 +434,7 @@ function updatePlayerSize() {
     const playerWidth = (config.GAME_WIDTH * 6) / 100;
     elements.player.style.height = `${playerHeight}px`;
     elements.player.style.width = `${playerWidth}px`;
+    elements.player.style.left = `${config.GAME_WIDTH/2}px`;
 }
 function updateAlienPositions() {
     const rows = 5;
@@ -450,7 +451,6 @@ function updateAlienPositions() {
         
         const alienLeft = offsetX + col * alienWidth;
         const alienTop = offsetY + row * alienHeight;
-        // Update size and position
         alien.element.style.width = `${alienWidth}px`;
         alien.element.style.height = `${alienHeight}px`;
         alien.element.style.transform = `translate(${alienLeft}px, ${alienTop}px)`;
