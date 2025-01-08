@@ -47,7 +47,6 @@ export function spawnAliens() {
 export function updateAliens() {
     const movement = enemyDirection * enemySpeed;
     let needsDirectionChange = false;
-   // requestAnimationFrame(() => {
         gameObjects.aliens.forEach((alien) => {
             alien.x += movement; 
             if (!needsDirectionChange) {
@@ -59,7 +58,6 @@ export function updateAliens() {
         if (needsDirectionChange) {
             enemyDirection *= -1;
         }
-   // });
 }
 
 

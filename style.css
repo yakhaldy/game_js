@@ -213,21 +213,6 @@ color: red;
     margin-left: 10px;
 }
 
-
-@keyframes explode {
-0% {
-transform: scale(1);
-opacity: 1;
-}
-50% {
-transform: scale(1.5);
-opacity: 0.5;
-}
-100% {
-transform: scale(0);
-opacity: 0;
-}
-}
 .score-label {
 position: absolute;
 font-size: 1.5rem;
@@ -236,9 +221,14 @@ color: #ffcc00; /* Bright yellow */
 pointer-events: none; /* Allow clicks to pass through */
 transition: top 1s ease-out, opacity 1s ease-out; /* Smooth transition for movement and fade */
 }
+
 .alien.destroyed {
-animation: explode 0.5s forwards;
+    display: none;
 }
+
+
+
+
 .score-animation {
 font-size: 20px;
 color: white;

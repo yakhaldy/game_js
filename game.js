@@ -424,8 +424,10 @@ function restartGame() {
 
 
 window.addEventListener('resize', () => {
-  location.reload();
+    updateAlienPositions()
+    updatePlayerSize()
 })
+
 function updatePlayerSize() {
     const playerHeight = (config.GAME_HEIGHT * 6) / 100;
     const playerWidth = (config.GAME_WIDTH * 6) / 100;

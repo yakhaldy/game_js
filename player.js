@@ -51,36 +51,29 @@ export function tryShoot() {
 }
 
 function checkBulletAlienCollision(bullet) {
-
-    gameObjects.aliens = gameObjects.aliens.filter(alien => {
+     gameObjects.aliens.forEach(alien => {
         const alienRect = alien.element.getBoundingClientRect();
         const bulletRect = bullet.element.getBoundingClientRect();
+        if (!alien.element.classList.contains('destroyed')) {
+            if (isColliding(bulletRect, alienRect)) {
+                alien.element.classList.add('destroyed');
+                if (input.sound) {
+                    sounds.killEnemy.currentTime = 0;
+                    sounds.killEnemy.play();
+                }
 
-        if (isColliding(bulletRect, alienRect)) {
-            alien.element.classList.add('destroyed');
-            if (input.sound) {
-                sounds.killEnemy.currentTime = 0;
-                sounds.killEnemy.play();
+                if (alien.element.dataset.type === '1') {
+                    state.score += 10;
+                } else {
+                    state.score += 20;
+                }
+                updateScoreboard();
+
+                const scoreLabel = createScoreLabel(alien);
+                animateScoreLabel(scoreLabel, alien);
+                bullet.element.remove();
             }
-            
-            if (alien.element.dataset.type === '1'){
-                state.score += 10;
-            } else {
-                state.score += 20;
-            }
-            updateScoreboard();
-
-            const scoreLabel = createScoreLabel(alien);
-            animateScoreLabel(scoreLabel, alien);
-
-            setTimeout(() => {
-                alien.element.remove();
-            }, 500);
-
-            bullet.element.remove();
-            return false;
         }
-        return true;
     });
 }
 export function isColliding(rect1, rect2) {
