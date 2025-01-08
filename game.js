@@ -30,7 +30,8 @@ export const state = {
     score: 0,
     lives: 3,
     timeRemaining: 60,
-    currentLevel: 1
+    currentLevel: 1,
+    pauseTime: 0
 };
 
 export const performance = {
@@ -138,18 +139,44 @@ function resetGameState() {
     updateScoreboard();
     spawnAliens();
 }
+
+
+
+
+
+function updatePauseTime() {
+    if (state.isPaused) {
+        state.pauseTime += 0.1; // Increment pause time by 0.1 seconds
+        updatePauseTimeDisplay();
+        requestAnimationFrame(updatePauseTime); // Continue updating the pause timer
+    }
+}
+
+function updatePauseTimeDisplay() {
+    const pauseTimeDisplay = document.getElementById('pause-time-display');
+    if (pauseTimeDisplay) {
+        const pauseTimeFormatted = state.pauseTime.toFixed(1); // Show 1 decimal point
+        pauseTimeDisplay.textContent = `Paused for: ${pauseTimeFormatted} s`;
+    }
+}
+
+
 function togglePause() {
     state.isPaused = !state.isPaused;
 
     if (state.isPaused) {
         clearInterval(timerInterval);
+        state.pauseTime = 0
+        updatePauseTime(); // Start updating the pause timer
     } else {
         startTimer();
     }
 
     elements.pauseMenu.style.display = state.isPaused ? 'block' : 'none';
 }
-
+document.getElementById('pause-menu').innerHTML += `
+    <div id="pause-time-display" style="font-size: 1.2rem; margin-top: 1rem; color: white;">Paused for : 0.0 s</div>
+`;
 document.getElementById('menu-toggle-btn').addEventListener('click', togglePause);
 
 function startTimer() {
@@ -397,8 +424,7 @@ function restartGame() {
 
 
 window.addEventListener('resize', () => {
-    updateAlienPositions()
-    updatePlayerSize()
+  location.reload();
 })
 function updatePlayerSize() {
     const playerHeight = (config.GAME_HEIGHT * 6) / 100;
@@ -431,11 +457,21 @@ function updateAlienPositions() {
     });
 }
 
+
+
+
+
+
+
+
+
+
 const video = document.getElementById("background-video");
 document.getElementById('startButton').addEventListener('click', function() {
     const startScreen = document.getElementById('start');
     startScreen.style.display = 'none';
     video.pause();
+ 
     initializeGame();
 });
 

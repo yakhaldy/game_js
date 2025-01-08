@@ -62,6 +62,8 @@ export function updateAliens() {
    // });
 }
 
+
+
 export function updateEnemyShooting() {
     if (!elements || gameObjects.aliens.length === 0) return;
 
