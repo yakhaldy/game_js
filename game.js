@@ -214,15 +214,16 @@ export function createScoreLabel(alien) {
     } else {
         scoreLabel.textContent = '+20';
     }
-    scoreLabel.style.left = `${alien.x + 20}px`;
-    scoreLabel.style.top = `${alien.y + 20}px`;
+  
+    scoreLabel.style.transform = `translate(${alien.x + 20}px, ${alien.y + 20}px)`;
+
     elements.container.appendChild(scoreLabel);
     return scoreLabel;
 }
 export function animateScoreLabel(scoreLabel, alien) {
     setTimeout(() => {
-        scoreLabel.style.transition = 'all 1s ease-out';
-        scoreLabel.style.top = `${alien.y - 30}px`;
+        scoreLabel.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
+        scoreLabel.style.transform = `translate(${alien.x + 20}px, ${alien.y - 30}px)`;
         scoreLabel.style.opacity = 0;
     }, 10);
 
@@ -459,19 +460,11 @@ function updateAlienPositions() {
     });
 }
 
-
-
-
-
-
-
-
-
-
 const video = document.getElementById("background-video");
 document.getElementById('startButton').addEventListener('click', function() {
     const startScreen = document.getElementById('start');
-    startScreen.style.display = 'none';
+    //startScreen.style.display = 'none';
+    startScreen.remove()
     video.pause();
  
     initializeGame();

@@ -218,8 +218,8 @@ position: absolute;
 font-size: 1.5rem;
 font-weight: bold;
 color: #ffcc00; /* Bright yellow */
-pointer-events: none; /* Allow clicks to pass through */
-transition: top 1s ease-out, opacity 1s ease-out; /* Smooth transition for movement and fade */
+/* pointer-events: none; /* Allow clicks to pass through */
+/* transition: top 1s ease-out, opacity 1s ease-out; Smooth transition for movement and fade  */
 }
 
 .alien.destroyed {
