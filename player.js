@@ -20,7 +20,6 @@ export function updatePlayerMovement() {
         elements.player.dataset.currentX = newX.toString();
     }
 }
-
 export function tryShoot() {
     const currentTime = Date.now();
     if (currentTime - performance.lastShootTime < 250) return;
@@ -35,7 +34,7 @@ export function tryShoot() {
     bullet.classList.add('bullet');
     
     // Set initial position using transform
-    bullet.style.transform = `translate(${bulletStartX + 20}px, ${bulletStartY}px)`;
+    bullet.style.transform = `translate(${bulletStartX}px, ${bulletStartY}px)`;
     bullet.style.willChange = 'transform';
     elements.container.appendChild(bullet);
 
@@ -48,7 +47,6 @@ export function tryShoot() {
 
     performance.lastShootTime = currentTime;
 }
-
 export function updateBullets() {
     gameObjects.bullets = gameObjects.bullets.filter(bullet => {
         const transform = getComputedStyle(bullet.element).transform;  
@@ -114,7 +112,6 @@ export function isColliding(rect1, rect2) {
         rect1.bottom < rect2.top ||
         rect1.top > rect2.bottom);
 }
-
 function loseLife() {
 
  
@@ -131,7 +128,6 @@ function loseLife() {
         gameOver();
     }
 }
-
 function flashPlayer() {
     elements.player.classList.add('flash');
     elements.container.classList.add('low-time');

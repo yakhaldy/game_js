@@ -26,7 +26,7 @@ export const config = {
 
 export const state = {
     isRunning: false,
-    isPaused: false,
+    isPaused: true,
     score: 0,
     lives: 3,
     timeRemaining: 60,
@@ -105,7 +105,6 @@ function updateSoundDisplay() {
         soundButton.style.backgroundColor = input.sound ? '#4CAF50' : '#ff4d4d';
     }
 }
-
 function toggleSound() {
     input.sound = !input.sound;
     updateSoundDisplay();
@@ -139,11 +138,6 @@ function resetGameState() {
     updateScoreboard();
     spawnAliens();
 }
-
-
-
-
-
 function updatePauseTime() {
     if (state.isPaused) {
         state.pauseTime += 0.1; // Increment pause time by 0.1 seconds
@@ -151,7 +145,6 @@ function updatePauseTime() {
         requestAnimationFrame(updatePauseTime); // Continue updating the pause timer
     }
 }
-
 function updatePauseTimeDisplay() {
     const pauseTimeDisplay = document.getElementById('pause-time-display');
     if (pauseTimeDisplay) {
@@ -159,8 +152,6 @@ function updatePauseTimeDisplay() {
         pauseTimeDisplay.textContent = `Paused for: ${pauseTimeFormatted} s`;
     }
 }
-
-
 function togglePause() {
     state.isPaused = !state.isPaused;
 
@@ -243,11 +234,6 @@ function checkTopScore() {
         showGameTop();
     }
 }
-
-
-
-
-
 export function updateLivesDisplay() {
     const livesContainer = document.getElementById('lives-container');
     livesContainer.innerHTML = ''; // Clear existing hearts
@@ -267,8 +253,6 @@ export function updateLivesDisplay() {
         livesContainer.appendChild(heart);
     }
 }
-
-
 function gameLoop() {
     if (!state.isPaused && state.isRunning) {
         updatePlayerMovement();
@@ -285,11 +269,21 @@ function startGameLoop() {
     requestAnimationFrame(gameLoop);
 }
 export function gameOver() {
-    state.isRunning = false;
-    state.isPaused = true;
-
+    // state.isRunning = false;
+    // state.isPaused = true;
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    gameObjects.bullets.forEach(bullet => bullet.element.remove());
+    gameObjects.aliens.forEach(alien => alien.element.remove());
+    gameObjects.bullets = [];
+    gameObjects.aliens = [];
     const overlay = createOverlay('Game Over', state.score, '#ff4d4d');
     elements.container.appendChild(overlay);
+    
+   // cancelAnimationFrame(gameLoop);
 }
 function showGameTop() {
     state.isRunning = false;
@@ -339,15 +333,14 @@ function createOverlay(title, score, buttonColor, isTop = false) {
         ">${text}</button>
     `;
 
-    overlay.querySelector('#restart-game-btn').addEventListener('click', () => {
-        overlay.remove();
-        if (title === 'Congratulations!') {
-            nextLevel();
-        } else {
-            restartGame()
-        }
-    });
-
+        overlay.querySelector('#restart-game-btn').addEventListener('click', () => {
+            overlay.remove();
+            if (title === 'Congratulations!') {
+                nextLevel();
+            } else {
+                restartGame()
+            }
+        });
     return overlay;
 }
 function nextLevel() {
@@ -422,13 +415,10 @@ function restartGame() {
 
     updateScoreboard();
 }
-
-
 window.addEventListener('resize', () => {
     updateAlienPositions()
     updatePlayerSize()
 })
-
 function updatePlayerSize() {
     const playerHeight = (config.GAME_HEIGHT * 6) / 100;
     const playerWidth = (config.GAME_WIDTH * 6) / 100;
@@ -459,19 +449,11 @@ function updateAlienPositions() {
         alien.y = alienTop;
     });
 }
-
-const video = document.getElementById("background-video");
 document.getElementById('startButton').addEventListener('click', function() {
     const startScreen = document.getElementById('start');
-    //startScreen.style.display = 'none';
     startScreen.remove()
-    video.pause();
- 
     initializeGame();
 });
-
-
-// Initialize game when DOM is loaded 
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     startTimer()

@@ -54,7 +54,7 @@ box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6); /* Light glowing effect */
     z-index: 10;
 }
 
-#score, #lives, #timer, #fps , #Level  {
+#score, #lives, #timer , #Level  {
     font-size: 20px;
 }
 
@@ -303,18 +303,13 @@ z-index: 1000;
         align-items: center; 
         justify-content: center; 
     }
+    #score, #lives, #timer , #Level  {
+        font-size: 10px;
+    }
 }
 
 /********************/
-#background-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1; 
-}
+
 
 #start {
     position: fixed; 
@@ -326,7 +321,7 @@ z-index: 1000;
     justify-content: center;
     align-items: center; 
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.8); 
+    background-color: black; 
     z-index: 100000; 
 }
 #start p {

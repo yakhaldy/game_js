@@ -42,8 +42,6 @@ export function spawnAliens() {
         }
     }
 }
-
-
 export function updateAliens() {
     const movement = enemyDirection * enemySpeed;
     let needsDirectionChange = false;
@@ -61,9 +59,6 @@ export function updateAliens() {
         enemyDirection *= -1;
     }
 }
-
-
-
 export function updateEnemyShooting() {
     if (!elements || gameObjects.aliens.length === 0) return;
 
