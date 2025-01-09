@@ -26,13 +26,13 @@ function tryShoot() {
     if (state.isPaused || state.isOver) return;
     const currentTime = Date.now();
     if (currentTime - performance.lastShootTime < 250) return;
-
+    
     const playerXY = elements.player.getBoundingClientRect();
     const containerRect = elements.container.getBoundingClientRect();
     
     const bulletStartX = playerXY.left + (playerXY.width / 2) - containerRect.left - 2.5;
     const bulletStartY = config.GAME_HEIGHT - 70;
-
+    
     const bullet = document.createElement('div');
     bullet.classList.add('bullet');
     
@@ -40,14 +40,14 @@ function tryShoot() {
     bullet.style.transform = `translate(${bulletStartX}px, ${bulletStartY}px)`;
     bullet.style.willChange = 'transform';
     elements.container.appendChild(bullet);
-
     gameObjects.bullets.push({
         element: bullet,
         x: bulletStartX,
         y: bulletStartY,
         initialY: bulletStartY
     });
-
+    
+    sounds.shoot.play();
     performance.lastShootTime = currentTime;
 }
 

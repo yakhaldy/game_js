@@ -2,7 +2,7 @@ import { elements, gameObjects, enemySpeed, config, state } from './game.js';
 
 let enemyDirection = 1;
 
-export function spawnAliens() {
+function spawnAliens() {
     const rows = 5;
     const cols = 10;
 
@@ -42,7 +42,8 @@ export function spawnAliens() {
         }
     }
 }
-export function updateAliens() {
+
+function updateAliens() {
     const movement = enemyDirection * enemySpeed;
     let needsDirectionChange = false;
     gameObjects.aliens.forEach((alien) => {
@@ -59,7 +60,8 @@ export function updateAliens() {
         enemyDirection *= -1;
     }
 }
-export function updateEnemyShooting() {
+
+function updateEnemyShooting() {
     if (!elements || gameObjects.aliens.length === 0) return;
 
     const randomAlienIndex = Math.floor(Math.random() * gameObjects.aliens.length);
@@ -82,3 +84,5 @@ export function updateEnemyShooting() {
         }
     }
 }
+
+export { spawnAliens, updateAliens, updateEnemyShooting };

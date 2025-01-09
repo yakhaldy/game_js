@@ -4,7 +4,8 @@ import { tryShoot, updateBullets, updatePlayerMovement } from './player.js'
 
 const sounds = {
     killEnemy: new Audio('assets/sounds/kill_enemy.mp3'),
-    loseLife: new Audio('assets/sounds/lose_life.mp3')
+    loseLife: new Audio('assets/sounds/lose_life.mp3'),
+    shoot: new Audio('assets/sounds/8-bit-laser.mp3')
 };
 
 let enemySpeed = 0.2;
@@ -53,7 +54,7 @@ const elements = {
 const input = {
     left: false,
     right: false,
-    shoot: false,
+    shootingInterval: null,
     sound: true
 };
 
@@ -67,25 +68,35 @@ const gameObjects = {
 function setupEventListeners() {
     window.addEventListener('keydown', (e) => {
         switch (e.code) {
-            case 'ArrowLeft': input.left = true; break;
-            case 'ArrowRight': input.right = true; break;
-            case 'Space':
-                input.shoot = true;
-                tryShoot();
-                break;
+            case 'ArrowLeft':
+                case 'KeyA': 
+                    input.left = true;
+                    break;
+            case 'ArrowRight':
+                case 'KeyD': 
+                    input.right = true;
+                    break;
             case 'Escape': togglePause(); break;
-            case 'KeyQ':
-                toggleSound();
+            case 'KeyQ': toggleSound(); break;
+            case 'Space':
+                if (!input.shootingInterval) {
+                    input.shootingInterval = setInterval(tryShoot);
+                }
                 break;
         }
     });
 
     window.addEventListener('keyup', (e) => {
         switch (e.code) {
-            case 'ArrowLeft': input.left = false; break;
-            case 'ArrowRight': input.right = false; break;
+            case 'ArrowLeft': 
+                case 'KeyA':
+                    input.left = false; break;
+            case 'ArrowRight': 
+                case 'KeyD':
+                    input.right = false; break;
             case 'Space':
-                input.shoot = false;
+                clearInterval(input.shootingInterval);
+                input.shootingInterval = null;
                 break;
         }
     });
@@ -249,7 +260,7 @@ function checkTopScore() {
 
 function updateLivesDisplay() {
     const livesContainer = document.getElementById('lives-container');
-    livesContainer.innerHTML = ''; // Clear existing hearts
+    livesContainer.innerHTML = '';
 
     for (let i = 0; i < 3; i++) { // Loop through maxLives
         const heart = document.createElement('img');
@@ -266,15 +277,15 @@ function updateLivesDisplay() {
         livesContainer.appendChild(heart);
     }
 }
+
 function gameLoop() {
-    if (!state.isPaused) {
+    if (!state.isPaused || state.isOver) {
         updatePlayerMovement();
         updateBullets();
         updateAliens();
         updateEnemyShooting();
         updateScoreboard();
     }
-
     requestAnimationFrame(gameLoop);
 }
 
