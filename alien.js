@@ -16,10 +16,10 @@ export function spawnAliens() {
         for (let col = 0; col < cols; col++) {
             const alien = document.createElement('img');
             if (row == 0 && state.currentLevel > 2) {
-                alien.src = 'alien2.png';
+                alien.src = 'assets/images/alien2.png';
                 alien.dataset.type = '2';
             } else {
-                alien.src = 'alien.png';
+                alien.src = 'assets/images/alien.png';
                 alien.dataset.type = '1';
             }
             alien.classList.add('alien');

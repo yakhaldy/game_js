@@ -2,15 +2,15 @@ import { spawnAliens, updateAliens, updateEnemyShooting } from './alien.js'
 import { tryShoot, updateBullets, updatePlayerMovement } from './player.js'
 // Game state and configuration objects
 
-export const sounds = {
+const sounds = {
     killEnemy: new Audio('assets/sounds/kill_enemy.mp3'),
     loseLife: new Audio('assets/sounds/lose_life.mp3')
 };
 
-export let enemySpeed = 0.2;
+let enemySpeed = 0.2;
 let timerInterval = null;
 
-export const config = {
+const config = {
     get GAME_WIDTH() {
         return elements.container.clientWidth;
     },
@@ -21,11 +21,10 @@ export const config = {
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
     RANDOM_BULLET: 0.01
-
 };
 
-export const state = {
-    isRunning: false,
+const state = {
+    isOver: false,
     isPaused: true,
     score: 0,
     lives: 3,
@@ -34,11 +33,11 @@ export const state = {
     pauseTime: 0
 };
 
-export const performance = {
+const performance = {
     lastShootTime: 0
 };
 
-export const elements = {
+const elements = {
     container: document.getElementById('game-container'),
     player: document.getElementById('player'),
     pauseMenu: document.getElementById('pause-menu'),
@@ -51,14 +50,14 @@ export const elements = {
     soundButton: document.getElementById('Sound')
 };
 
-export const input = {
+const input = {
     left: false,
     right: false,
     shoot: false,
     sound: true
 };
 
-export const gameObjects = {
+const gameObjects = {
     bullets: [],
     aliens: []
 };
@@ -98,6 +97,7 @@ function setupEventListeners() {
         updateSoundDisplay();
     }
 }
+
 function updateSoundDisplay() {
     const soundButton = elements.soundButton;
     if (soundButton) {
@@ -105,6 +105,7 @@ function updateSoundDisplay() {
         soundButton.style.backgroundColor = input.sound ? '#4CAF50' : '#ff4d4d';
     }
 }
+
 function toggleSound() {
     input.sound = !input.sound;
     updateSoundDisplay();
@@ -115,13 +116,15 @@ function toggleSound() {
         testSound.play()
     }
 }
+
 function initializeGame() {
     resetGameState();
-    startGameLoop();
+    requestAnimationFrame(gameLoop);
 }
+
 function resetGameState() {
     Object.assign(state, {
-        isRunning: true,
+        isOver: false,
         isPaused: false,
         score: 0,
         lives: 3,
@@ -138,6 +141,7 @@ function resetGameState() {
     updateScoreboard();
     spawnAliens();
 }
+
 function updatePauseTime() {
     if (state.isPaused) {
         state.pauseTime += 0.1; // Increment pause time by 0.1 seconds
@@ -145,13 +149,15 @@ function updatePauseTime() {
         requestAnimationFrame(updatePauseTime); // Continue updating the pause timer
     }
 }
+
 function updatePauseTimeDisplay() {
     const pauseTimeDisplay = document.getElementById('pause-time-display');
     if (pauseTimeDisplay) {
-        const pauseTimeFormatted = state.pauseTime.toFixed(1); // Show 1 decimal point
+        const pauseTimeFormatted = (state.pauseTime / 10).toFixed();
         pauseTimeDisplay.textContent = `Paused for: ${pauseTimeFormatted} s`;
     }
 }
+
 function togglePause() {
     state.isPaused = !state.isPaused;
 
@@ -163,8 +169,9 @@ function togglePause() {
         startTimer();
     }
 
-    elements.pauseMenu.style.display = state.isPaused ? 'block' : 'none';
+    elements.pauseMenu.style.display = state.isPaused && !state.isOver ? 'block' : 'none';
 }
+
 document.getElementById('pause-menu').innerHTML += `
     <div id="pause-time-display" style="font-size: 1.2rem; margin-top: 1rem; color: white;">Paused for : 0.0 s</div>
 `;
@@ -195,8 +202,10 @@ function startTimer() {
         }
     }, 1000);
 
+
 }
-export function createScoreLabel(alien) {
+
+function createScoreLabel(alien) {
 
     const scoreLabel = document.createElement('div');
     scoreLabel.classList.add('score-label');
@@ -211,7 +220,8 @@ export function createScoreLabel(alien) {
     elements.container.appendChild(scoreLabel);
     return scoreLabel;
 }
-export function animateScoreLabel(scoreLabel, alien) {
+
+function animateScoreLabel(scoreLabel, alien) {
     setTimeout(() => {
         scoreLabel.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
         scoreLabel.style.transform = `translate(${alien.x + 20}px, ${alien.y - 30}px)`;
@@ -222,19 +232,22 @@ export function animateScoreLabel(scoreLabel, alien) {
         scoreLabel.remove();
     }, 1000);
 }
-export function updateScoreboard() {
+
+function updateScoreboard() {
     elements.scoreBoard.timer.textContent = `Time: ${state.timeRemaining}`;
     elements.scoreBoard.score.textContent = `Score: ${state.score}`;
     elements.scoreBoard.Level.textContent = `Level: ${state.currentLevel}`
     updateLivesDisplay();
     checkTopScore();
 }
+
 function checkTopScore() {
     if (state.score >= config.MAX_SCORE) {
         showGameTop();
     }
 }
-export function updateLivesDisplay() {
+
+function updateLivesDisplay() {
     const livesContainer = document.getElementById('lives-container');
     livesContainer.innerHTML = ''; // Clear existing hearts
 
@@ -243,9 +256,9 @@ export function updateLivesDisplay() {
 
         // If we still have this life, display the regular heart
         if (i < state.lives) {
-            heart.src = 'heart.png'; // For remaining lives
+            heart.src = 'assets/images/heart.png'; // For remaining lives
         } else {
-            heart.src = 'heart-lose.png'; // For lost lives
+            heart.src = 'assets/images/heart-lose.png'; // For lost lives
         }
 
         heart.alt = 'Heart';
@@ -254,7 +267,7 @@ export function updateLivesDisplay() {
     }
 }
 function gameLoop() {
-    if (!state.isPaused && state.isRunning) {
+    if (!state.isPaused) {
         updatePlayerMovement();
         updateBullets();
         updateAliens();
@@ -262,16 +275,12 @@ function gameLoop() {
         updateScoreboard();
     }
 
+    requestAnimationFrame(gameLoop);
+}
 
-    requestAnimationFrame(gameLoop);
-}
-function startGameLoop() {
-    requestAnimationFrame(gameLoop);
-}
-export function gameOver() {
-    // state.isRunning = false;
-    // state.isPaused = true;
-    
+function gameOver() {
+    state.isOver = true;
+
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -285,16 +294,17 @@ export function gameOver() {
     
    // cancelAnimationFrame(gameLoop);
 }
+
 function showGameTop() {
-    state.isRunning = false;
     state.isPaused = true;
     if (state.currentLevel >= 10) {
-        endOfGmae()
+        endOfGame()
         return;
     }
     const overlay = createOverlay('Congratulations!', state.score, '#4CAF50', true);
     elements.container.appendChild(overlay);
 }
+
 function createOverlay(title, score, buttonColor, isTop = false) {
     let text
     if (title == 'Game Over') {
@@ -343,6 +353,7 @@ function createOverlay(title, score, buttonColor, isTop = false) {
         });
     return overlay;
 }
+
 function nextLevel() {
 
     if (timerInterval) {
@@ -352,7 +363,6 @@ function nextLevel() {
     state.currentLevel += 1
     state.timeRemaining = 60;
     state.isPaused = false;
-    state.isRunning = true;
     config.BULLET_SPEED += 3
     config.RANDOM_BULLET += 0.01
     enemySpeed += 0.5
@@ -367,7 +377,8 @@ function nextLevel() {
 
     updateScoreboard();
 }
-function endOfGmae() {
+
+function endOfGame() {
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -391,10 +402,10 @@ function endOfGmae() {
     elements.container.innerHTML = '';
     elements.container.appendChild(congratulationsOverlay);
 
-    state.isRunning = false;
     state.isPaused = true;
     return;
 }
+
 function restartGame() {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -404,7 +415,6 @@ function restartGame() {
     resetGameState();
     state.timeRemaining = 60;
     state.isPaused = false;
-    state.isRunning = true;
 
     startTimer();
     elements.pauseMenu.style.display = 'none';
@@ -458,3 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     startTimer()
 });
+
+
+export {sounds, state, elements, enemySpeed, config, performance, input, gameObjects};
+export {createScoreLabel, animateScoreLabel, updateScoreboard, updateLivesDisplay, gameOver };

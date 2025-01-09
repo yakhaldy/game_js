@@ -1,6 +1,7 @@
 import { elements, gameObjects, config, performance, updateScoreboard, animateScoreLabel, createScoreLabel, input, sounds, state, gameOver } from './game.js';
 
-export function updatePlayerMovement() {
+function updatePlayerMovement() {
+    if (state.isPaused || state.isOver) return;
     const playerXY = elements.player.getBoundingClientRect();
     const containerXY = elements.container.getBoundingClientRect();
     const playerSpeed = config.PLAYER_SPEED;
@@ -20,7 +21,9 @@ export function updatePlayerMovement() {
         elements.player.dataset.currentX = newX.toString();
     }
 }
-export function tryShoot() {
+
+function tryShoot() {
+    if (state.isPaused || state.isOver) return;
     const currentTime = Date.now();
     if (currentTime - performance.lastShootTime < 250) return;
 
@@ -47,7 +50,8 @@ export function tryShoot() {
 
     performance.lastShootTime = currentTime;
 }
-export function updateBullets() {
+
+function updateBullets() {
     gameObjects.bullets = gameObjects.bullets.filter(bullet => {
         const transform = getComputedStyle(bullet.element).transform;  
         const matrix = new DOMMatrix(transform);
@@ -80,6 +84,7 @@ export function updateBullets() {
         return true;
     });
 }
+
 function checkBulletAlienCollision(bullet) {
      gameObjects.aliens.forEach(alien => {
         const alienRect = alien.element.getBoundingClientRect();
@@ -106,15 +111,15 @@ function checkBulletAlienCollision(bullet) {
         }
     });
 }
-export function isColliding(rect1, rect2) {
+
+function isColliding(rect1, rect2) {
     return !(rect1.right < rect2.left ||
         rect1.left > rect2.right ||
         rect1.bottom < rect2.top ||
         rect1.top > rect2.bottom);
 }
-function loseLife() {
 
- 
+function loseLife() {
     state.lives--;
     updateScoreboard();
     if (input.sound) {
@@ -128,6 +133,7 @@ function loseLife() {
         gameOver();
     }
 }
+
 function flashPlayer() {
     elements.player.classList.add('flash');
     elements.container.classList.add('low-time');
@@ -139,6 +145,4 @@ function flashPlayer() {
     }, 300);
 }
 
-
-
-
+export {updatePlayerMovement, tryShoot, updateBullets, isColliding};
