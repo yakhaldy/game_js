@@ -18,7 +18,7 @@ const config = {
     get GAME_HEIGHT() {
         return elements.container.clientHeight;
     },
-    MAX_SCORE: 50,
+    MAX_SCORE: 500,
     MAX_LEVEL: 10,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
@@ -64,6 +64,21 @@ const gameObjects = {
     aliens: []
 };
 
+
+let overlay = document.getElementById('animated-overlay');
+let offset = 0; 
+
+function animateOverlay() {
+    offset += 1; 
+    if (offset > window.innerWidth) { 
+        offset = -window.innerWidth;
+    }
+    overlay.style.transform = `translateX(${offset}px)`; 
+
+    requestAnimationFrame(animateOverlay);
+}
+
+requestAnimationFrame(animateOverlay);
 
 // Game functions
 function setupEventListeners() {
@@ -154,21 +169,7 @@ function resetGameState() {
     spawnAliens();
 }
 
-function updatePauseTime() {
-    if (state.isPaused) {
-        state.pauseTime += 0.1; // Increment pause time by 0.1 seconds
-        updatePauseTimeDisplay();
-        requestAnimationFrame(updatePauseTime); // Continue updating the pause timer
-    }
-}
 
-function updatePauseTimeDisplay() {
-    const pauseTimeDisplay = document.getElementById('pause-time-display');
-    if (pauseTimeDisplay) {
-        const pauseTimeFormatted = (state.pauseTime / 10).toFixed();
-        pauseTimeDisplay.textContent = `Paused for: ${pauseTimeFormatted} s`;
-    }
-}
 
 function togglePause() {
     state.isPaused = !state.isPaused;
@@ -176,7 +177,6 @@ function togglePause() {
     if (state.isPaused) {
         clearInterval(timerInterval);
         state.pauseTime = 0
-        updatePauseTime(); // Start updating the pause timer
     } else {
         startTimer();
     }
@@ -184,9 +184,7 @@ function togglePause() {
     elements.pauseMenu.style.display = state.isPaused && !state.isOver ? 'block' : 'none';
 }
 
-document.getElementById('pause-menu').innerHTML += `
-    <div id="pause-time-display" style="font-size: 1.2rem; margin-top: 1rem; color: white;">Paused for : 0.0 s</div>
-`;
+
 document.getElementById('menu-toggle-btn').addEventListener('click', togglePause);
 
 function startTimer() {
