@@ -18,7 +18,8 @@ const config = {
     get GAME_HEIGHT() {
         return elements.container.clientHeight;
     },
-    MAX_SCORE: 500,
+    MAX_SCORE: 50,
+    MAX_LEVEL: 10,
     PLAYER_SPEED: 5,
     BULLET_SPEED: 10,
     RANDOM_BULLET: 0.01
@@ -308,17 +309,27 @@ function gameOver() {
 
 function showGameTop() {
     state.isPaused = true;
-    if (state.currentLevel >= 10) {
+    if (state.currentLevel >= config.MAX_LEVEL) {
         endOfGame()
         return;
     }
     const overlay = createOverlay('Congratulations!', state.score, '#4CAF50', true);
     elements.container.appendChild(overlay);
+   if (!state.isOver) {
+    document.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            const button = document.getElementById("restart-game-btn");
+            if (button) {
+                button.click();
+            }
+        }
+    });
+    }
 }
 
 function createOverlay(title, score, buttonColor, isTop = false) {
     let text
-    if (title == 'Game Over') {
+    if (state.isOver) {
         text = 'Try again'
     } else {
         text = 'Next level'

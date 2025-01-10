@@ -24,6 +24,7 @@ function updatePlayerMovement() {
 
 function tryShoot() {
     if (state.isPaused || state.isOver) return;
+    sounds.shoot.play();
     const currentTime = Date.now();
     if (currentTime - performance.lastShootTime < 250) return;
     
@@ -47,7 +48,6 @@ function tryShoot() {
         initialY: bulletStartY
     });
     
-    sounds.shoot.play();
     performance.lastShootTime = currentTime;
 }
 
