@@ -374,9 +374,7 @@ html {
 }
 
 @media (max-width: 1000px) {
-
-    #menu-toggle-btn,
-    #Sound {
+    #menu-toggle-btn{
         height: 4%;
         font-size: 14px;
         display: flex;
