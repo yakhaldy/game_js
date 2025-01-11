@@ -1,67 +1,97 @@
 /* Fullscreen layout */
-body, html {
+button {
+    cursor: pointer;
+    font-family: "Press Start 2P", cursive;
+}
+
+body,
+html {
     margin: 0;
     padding: 0;
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align the game container to the top */
+    align-items: flex-start;
+    /* Align the game container to the top */
     background-color: #111;
     overflow: hidden;
 }
+
 #animated-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 1%;
-    background: rgba(0, 0, 0, 0.5); /* Dark transparent background */
+    background: rgba(0, 0, 0, 0.5);
+    /* Dark transparent background */
     z-index: 1000;
-    pointer-events: none; /* Allow clicks to pass through */
-    animation: slideAcross 5s linear infinite; /* Animation to slide across the page */
+    pointer-events: none;
+    /* Allow clicks to pass through */
+    animation: slideAcross 5s linear infinite;
+    /* Animation to slide across the page */
 }
 
 /* Keyframes for the sliding effect */
 @keyframes slideAcross {
     0% {
-        transform: translateX(-100%); /* Start off-screen to the left */
+        transform: translateX(-100%);
+        /* Start off-screen to the left */
     }
+
     50% {
-        transform: translateX(100%); /* Move off-screen to the right */
+        transform: translateX(100%);
+        /* Move off-screen to the right */
     }
+
     100% {
-        transform: translateX(-100%); /* Move back off-screen to the left */
+        transform: translateX(-100%);
+        /* Move back off-screen to the left */
     }
 }
-
 
 #game-container {
-position: relative;
-width: 800px ;  /* Set a fixed width for the game frame */
-height: 90%; /* Set a fixed height for the game frame */
-background-color: black;
-overflow: hidden;
-margin-top: 20px; /* Adjust this for spacing from the top */
-border: 2px solid white; /* Keep the white border */
-box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6); /* Light glowing effect */
+    position: relative;
+    width: 800px;
+    /* Set a fixed width for the game frame */
+    height: 90%;
+    /* Set a fixed height for the game frame */
+    background-color: black;
+    overflow: hidden;
+    margin-top: 20px;
+    /* Adjust this for spacing from the top */
+    border: 2px solid white;
+    /* Keep the white border */
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6);
+    /* Light glowing effect */
 }
+
 #game-container.low-time {
-    border: 2px solid rgb(255, 0, 0); /* Base red border */
-    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.6); /* Light glowing effect */
-    animation: flash 0.5s infinite alternate; /* Apply the flashing animation */
+    border: 2px solid rgb(255, 0, 0);
+    /* Base red border */
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.6);
+    /* Light glowing effect */
+    animation: flash 0.5s infinite alternate;
+    /* Apply the flashing animation */
 }
 
 /* Define the flashing animation */
 @keyframes flash {
     0% {
-        border-color: rgba(255, 0, 0, 1); /* Bright red */
-        box-shadow: 0 0 15px 10px rgba(255, 0, 0, 0.9); /* Intense glow */
+        border-color: rgba(255, 0, 0, 1);
+        /* Bright red */
+        box-shadow: 0 0 15px 10px rgba(255, 0, 0, 0.9);
+        /* Intense glow */
     }
+
     100% {
-        border-color: rgba(255, 0, 0, 0.5); /* Dimmer red */
-        box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.3); /* Subtle glow */
+        border-color: rgba(255, 0, 0, 0.5);
+        /* Dimmer red */
+        box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.3);
+        /* Subtle glow */
     }
 }
+
 /* Scoreboard at the top of the game frame */
 #scoreboard {
     position: absolute;
@@ -75,42 +105,52 @@ box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6); /* Light glowing effect */
     display: flex;
     justify-content: space-between;
     align-items: center;
-  padding: 0px 40px;
+    padding: 0px 40px;
     z-index: 10;
 }
 
-#score, #lives, #timer , #Level  {
+#score,
+#lives,
+#timer,
+#Level {
     font-size: 20px;
 }
 
-
-
 #timer.low-time {
-color: red;
+    color: red;
 }
+
 #lives.lose-live {
-color: red;
- }
- #lives-container {
+    color: red;
+}
+
+#lives-container {
     display: flex;
     gap: 5px;
     align-items: center;
 }
+
 #lives-container img {
     width: 40px;
     height: auto;
 }
+
 /* Fullscreen player and bullet styles */
-#player, .alien, .bullet {
+#player,
+.alien,
+.bullet {
     position: absolute;
-    transition: transform 0.016s linear; /* Helps with 60 FPS smoothness */
+    transition: transform 0.016s linear;
+    /* Helps with 60 FPS smoothness */
 }
 
 #player {
     height: 6%;
     bottom: 20px;
-    left: calc(50% - 20px); /* Center player horizontally */
-    transform: translateX(-50%); /* ????? */
+    left: calc(50% - 20px);
+    /* Center player horizontally */
+    transform: translateX(-50%);
+    /* ????? */
 }
 
 .alien {
@@ -166,6 +206,7 @@ color: red;
 #pause-menu button:hover {
     background-color: #555;
 }
+
 #menu-toggle-btn {
     position: absolute;
     top: 10px;
@@ -183,15 +224,24 @@ color: red;
 #menu-toggle-btn:hover {
     background-color: #555;
 }
+
 /* Flashing timer effect */
 .flash {
     animation: flashEffect 0.3s ease-in-out infinite;
 }
 
 @keyframes flashEffect {
-    0% { background-color: rgba(255, 0, 0, 0.5); }
-    50% { background-color: rgba(255, 0, 0, 0); }
-    100% { background-color: rgba(255, 0, 0, 0.5); }
+    0% {
+        background-color: rgba(255, 0, 0, 0.5);
+    }
+
+    50% {
+        background-color: rgba(255, 0, 0, 0);
+    }
+
+    100% {
+        background-color: rgba(255, 0, 0, 0.5);
+    }
 }
 
 /* Timer warning when less than 10 */
@@ -239,40 +289,44 @@ color: red;
 }
 
 .score-label {
-position: absolute;
-font-size: 1.5rem;
-font-weight: bold;
-color: #ffcc00; /* Bright yellow */
-/* pointer-events: none; /* Allow clicks to pass through */
-/* transition: top 1s ease-out, opacity 1s ease-out; Smooth transition for movement and fade  */
+    font-family: Arial, Helvetica, sans-serif;
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00;
+    /* Bright yellow */
+    /* pointer-events: none; /* Allow clicks to pass through */
+    /* transition: top 1s ease-out, opacity 1s ease-out; Smooth transition for movement and fade  */
 }
 
 .alien.destroyed {
     display: none;
 }
 
-
-
-
 .score-animation {
-font-size: 20px;
-color: white;
-font-weight: bold;
-pointer-events: none; /* Prevent interactions */
-position: absolute;
-transition: transform 1s ease-in-out, opacity 1s;
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+    pointer-events: none;
+    /* Prevent interactions */
+    position: absolute;
+    transition: transform 1s ease-in-out, opacity 1s;
 }
-#Sound{
-position: fixed;
-display: none;
-top: 20px;
-right: 20px;
-background-color: #4CAF50;
-color: white;
-padding: 10px 20px;
-border-radius: 5px;
-font-size: 1rem;
-z-index: 1000;
+
+
+#Sound {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    z-index: 1000;
 }
 
 /********************/
@@ -314,55 +368,60 @@ z-index: 1000;
 }
 
 @media (max-width: 1400px) {
-    #game-instructions{
+    #game-instructions {
         display: none;
     }
 }
 
 @media (max-width: 1000px) {
-    #menu-toggle-btn, #Sound{
+
+    #menu-toggle-btn,
+    #Sound {
         height: 4%;
-        font-size: 14px; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    #score, #lives, #timer , #Level  {
+
+    #score,
+    #lives,
+    #timer,
+    #Level {
         font-size: 10px;
     }
 }
 
 /********************/
 
-
 #start {
-    position: fixed; 
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
     flex-direction: column;
-    background-color: black; 
-    z-index: 100000; 
-}
-#start p {
-    font-size: 40px; 
-    font-weight: bold; 
-    color: white; 
-    text-align: center;
-    text-shadow: 4px 4px 10px rgba(129, 127, 127, 0.7); 
-    margin-top: 20px; 
+    background-color: black;
+    z-index: 100000;
 }
 
+#start p {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    text-shadow: 4px 4px 10px rgba(129, 127, 127, 0.7);
+    margin-top: 20px;
+}
 
 #startButton {
     padding: 15px 30px;
     font-size: 20px;
     color: #555;
-    background-color: rgba(3, 3, 3, 0.8); 
+    background-color: rgba(3, 3, 3, 0.8);
     border: solid white 1px;
     border-radius: 10px;
     cursor: pointer;
@@ -374,12 +433,13 @@ z-index: 1000;
     color: white;
     transform: scale(1.1);
 }
+
 .time-overlay {
     position: fixed;
     top: 10px;
     left: 10px;
     color: white;
     font-size: 2rem;
-    font-family: 'Arial', sans-serif;
+    font-family: "Pixelify Sans", sans-serif;
     z-index: 10000;
 }

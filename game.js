@@ -492,6 +492,5 @@ document.addEventListener('DOMContentLoaded', () => {
     startTimer()
 });
 
-
 export {sounds, state, elements, enemySpeed, config, performance, input, gameObjects};
 export {createScoreLabel, animateScoreLabel, updateScoreboard, updateLivesDisplay, gameOver };
