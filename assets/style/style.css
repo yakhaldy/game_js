@@ -264,14 +264,13 @@ transition: transform 1s ease-in-out, opacity 1s;
 }
 #Sound{
 position: fixed;
+display: none;
 top: 20px;
 right: 20px;
 background-color: #4CAF50;
 color: white;
 padding: 10px 20px;
-border: none;
 border-radius: 5px;
-cursor: pointer;
 font-size: 1rem;
 z-index: 1000;
 }

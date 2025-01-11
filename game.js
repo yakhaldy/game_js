@@ -119,19 +119,22 @@ function setupEventListeners() {
 
     document.getElementById('continue-btn').addEventListener('click', togglePause);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
-    if (elements.soundButton) {
-        elements.soundButton.addEventListener('click', toggleSound);
-        updateSoundDisplay();
-    }
+
 }
 
 function updateSoundDisplay() {
     const soundButton = elements.soundButton;
     if (soundButton) {
-        soundButton.textContent = `Sound: ${input.sound ? 'On' : 'Off'}`;
+        soundButton.style.display = 'block'
+        soundButton.textContent = `${input.sound ? 'On' : 'Off'}`;
         soundButton.style.backgroundColor = input.sound ? '#4CAF50' : '#ff4d4d';
+    const closeTimeout = setTimeout(() => {
+        soundButton.style.display = 'none'
+        clearTimeout(closeTimeout)
+    }, 3000)
     }
 }
+
 
 function toggleSound() {
     input.sound = !input.sound;
